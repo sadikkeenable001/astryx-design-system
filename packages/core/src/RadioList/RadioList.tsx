@@ -26,7 +26,7 @@ import React, {
 } from 'react';
 import * as stylex from '@stylexjs/stylex';
 import {spacingVars} from '../theme/tokens.stylex';
-import {Field} from '../Field/Field';
+import {Field, FieldLabel, FieldStatus} from '../Field';
 import type {InputStatus} from '../Field/types';
 import {useTooltip} from '../Tooltip';
 import {useResolvedRequired} from '../hooks/useResolvedRequired';
@@ -74,6 +74,27 @@ const styles = stylex.create({
     flexDirection: 'row',
     gap: spacingVars['--spacing-5'],
   },
+  container: {
+    display: 'flex',
+    boxSizing: 'border-box',
+    width: '100%',
+  },
+  layoutRow: {
+    flexDirection: 'row',
+    gap: spacingVars['--spacing-3'],
+  },
+  layoutRowReverse: {
+    flexDirection: 'row-reverse',
+    gap: spacingVars['--spacing-3'],
+  },
+  layoutColumn: {
+    flexDirection: 'column',
+    gap: spacingVars['--spacing-2'],
+  },
+  layoutColumnReverse: {
+    flexDirection: 'column-reverse',
+    gap: spacingVars['--spacing-2'],
+  },
 });
 
 export interface RadioListProps extends Omit<
@@ -107,6 +128,52 @@ export interface RadioListProps extends Omit<
    * @default "vertical"
    */
   orientation?: 'vertical' | 'horizontal';
+  /**
+   * Component variant.
+   * - 'standard': Default field layout (label above options).
+   * - 'boxed' | 'card': Boxed container layout with background and border.
+   * @default 'standard'
+   */
+  variant?: 'standard' | 'boxed' | 'card';
+  /**
+   * Position of the label relative to the radio options.
+   * - 'top': Label positioned above options.
+   * - 'left': Label on the left, options on the right.
+   * - 'right': Options on the left, label on the right.
+   * - 'bottom': Options above, label below.
+   * @default 'top' (for standard) or 'left' (for boxed/card)
+   */
+  labelPosition?: 'top' | 'left' | 'right' | 'bottom';
+  /**
+   * Custom background color for boxed/card variant.
+   * @default '#F1F6FF'
+   */
+  boxedBgColor?: string;
+  /**
+   * Custom border color for boxed/card variant.
+   * @default '#2b66b1'
+   */
+  boxedBorderColor?: string;
+  /**
+   * Custom padding for boxed/card variant.
+   * @default '10px 14px'
+   */
+  boxedPadding?: string;
+  /**
+   * Custom border radius for boxed/card variant.
+   * @default '6px'
+   */
+  boxedRadius?: string;
+  /**
+   * Justify content alignment between label and options.
+   * @default 'space-between'
+   */
+  justifyContent?: 'space-between' | 'flex-start' | 'flex-end' | 'center';
+  /**
+   * Vertical alignment between label and options.
+   * @default 'center'
+   */
+  alignItems?: 'center' | 'flex-start' | 'flex-end';
   /**
    * Whether all radio items are disabled.
    * @default false
@@ -159,6 +226,14 @@ export interface RadioListProps extends Omit<
    */
   width?: SizeValue;
   /**
+   * Custom font weight for the label text (e.g. 'bold', '600', 600).
+   */
+  labelFontWeight?: React.CSSProperties['fontWeight'];
+  /**
+   * Custom font size for the label text (e.g. '12px', '0.75rem', '14px').
+   */
+  labelFontSize?: React.CSSProperties['fontSize'];
+  /**
    * Tooltip text to display in an info icon at the end of the label.
    */
   labelTooltip?: string;
@@ -195,6 +270,16 @@ export function RadioList({
   value,
   onChange,
   orientation = 'vertical',
+  variant = 'standard',
+  labelPosition,
+  boxedBgColor,
+  boxedBorderColor,
+  boxedPadding,
+  boxedRadius,
+  justifyContent,
+  alignItems,
+  labelFontWeight,
+  labelFontSize,
   isDisabled = false,
   disabledMessage,
   isRequired = false,
@@ -345,69 +430,167 @@ export function RadioList({
     [value],
   );
 
+  const isBoxed = variant === 'boxed' || variant === 'card';
+  const effectiveLabelPosition = labelPosition ?? (isBoxed ? 'left' : 'top');
+  const effectiveLabelFontWeight =
+    labelFontWeight ?? (isBoxed ? 600 : undefined);
+  const effectiveLabelFontSize =
+    labelFontSize ?? (isBoxed ? '12px' : undefined);
+
+  const controlsNode = (
+    <div
+      ref={el => {
+        groupRef.current = el;
+        // Anchor + hover/focus listeners for the disabled-message tooltip.
+        // Handlers are gated internally by isEnabled, so attaching
+        // unconditionally is safe.
+        disabledMessageTooltip.ref(el);
+      }}
+      role="radiogroup"
+      aria-labelledby={labelID}
+      onFocus={handleFocus}
+      aria-describedby={
+        [
+          description ? descriptionID : null,
+          status?.message ? statusMessageID : null,
+          showsDisabledMessage ? disabledMessageTooltip.describedBy : null,
+        ]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
+      aria-invalid={status?.type === 'error' ? true : undefined}
+      aria-required={isEffectivelyRequired || undefined}
+      {...mergeProps(
+        themeProps('radio-list', {orientation, size}),
+        stylex.props(
+          styles.radiogroup,
+          orientation === 'vertical' ? styles.vertical : styles.horizontal,
+        ),
+      )}>
+      <RadioListContext value={contextValue}>{children}</RadioListContext>
+    </div>
+  );
+
+  if (variant === 'standard' && effectiveLabelPosition === 'top') {
+    return (
+      <Field
+        ref={ref}
+        data-testid={dataTestId}
+        label={label}
+        isLabelHidden={isLabelHidden}
+        description={description}
+        inputID={inputID}
+        labelID={labelID}
+        isGroupLabel
+        descriptionID={description ? descriptionID : undefined}
+        isOptional={isOptional}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        labelFontWeight={effectiveLabelFontWeight}
+        labelFontSize={effectiveLabelFontSize}
+        status={
+          status
+            ? {
+                type: status.type,
+                message: status.message,
+                messageID: status.message ? statusMessageID : undefined,
+              }
+            : undefined
+        }
+        labelTooltip={labelTooltip}
+        statusVariant="detached"
+        width={width}
+        xstyle={xstyle}
+        className={className}
+        style={style}>
+        {controlsNode}
+        {showsDisabledMessage &&
+          disabledMessageTooltip.renderTooltip(disabledMessage)}
+      </Field>
+    );
+  }
+
+  // Custom Boxed or Non-Top LabelPosition Layout
+  const isRowLayout =
+    effectiveLabelPosition === 'left' || effectiveLabelPosition === 'right';
+
+  const containerStyle: React.CSSProperties = {
+    ...(isBoxed
+      ? {
+          backgroundColor: boxedBgColor ?? '#F1F6FF',
+          border: `1px solid ${boxedBorderColor ?? '#2b66b1'}`,
+          borderRadius: boxedRadius ?? '6px',
+          padding: boxedPadding ?? '10px 14px',
+        }
+      : {}),
+    ...(width ? {width: typeof width === 'number' ? `${width}px` : width} : {}),
+    justifyContent:
+      justifyContent ??
+      (isBoxed && isRowLayout ? 'space-between' : 'flex-start'),
+    alignItems: alignItems ?? (isRowLayout ? 'center' : 'flex-start'),
+    ...style,
+  };
+
   return (
-    <Field
+    <div
       ref={ref}
       data-testid={dataTestId}
-      label={label}
-      isLabelHidden={isLabelHidden}
-      description={description}
-      inputID={inputID}
-      labelID={labelID}
-      isGroupLabel
-      descriptionID={description ? descriptionID : undefined}
-      isOptional={isOptional}
-      isRequired={isRequired}
-      isDisabled={isDisabled}
-      status={
-        status
-          ? {
-              type: status.type,
-              message: status.message,
-              messageID: status.message ? statusMessageID : undefined,
-            }
-          : undefined
-      }
-      labelTooltip={labelTooltip}
-      statusVariant="detached"
-      width={width}
-      xstyle={xstyle}
-      className={className}
-      style={style}>
+      style={containerStyle}
+      {...mergeProps(
+        stylex.props(
+          styles.container,
+          effectiveLabelPosition === 'left'
+            ? styles.layoutRow
+            : effectiveLabelPosition === 'right'
+              ? styles.layoutRowReverse
+              : effectiveLabelPosition === 'bottom'
+                ? styles.layoutColumnReverse
+                : styles.layoutColumn,
+          xstyle,
+        ),
+        {className},
+      )}>
       <div
-        ref={el => {
-          groupRef.current = el;
-          // Anchor + hover/focus listeners for the disabled-message tooltip.
-          // Handlers are gated internally by isEnabled, so attaching
-          // unconditionally is safe.
-          disabledMessageTooltip.ref(el);
-        }}
-        role="radiogroup"
-        aria-labelledby={labelID}
-        onFocus={handleFocus}
-        aria-describedby={
-          [
-            description ? descriptionID : null,
-            status?.message ? statusMessageID : null,
-            showsDisabledMessage ? disabledMessageTooltip.describedBy : null,
-          ]
-            .filter(Boolean)
-            .join(' ') || undefined
-        }
-        aria-invalid={status?.type === 'error' ? true : undefined}
-        aria-required={isEffectivelyRequired || undefined}
-        {...mergeProps(
-          themeProps('radio-list', {orientation, size}),
-          stylex.props(
-            styles.radiogroup,
-            orientation === 'vertical' ? styles.vertical : styles.horizontal,
-          ),
-        )}>
-        <RadioListContext value={contextValue}>{children}</RadioListContext>
+        style={{
+          flexShrink: isRowLayout ? 1 : 0,
+          flexGrow:
+            isRowLayout &&
+            (justifyContent ?? 'space-between') === 'space-between'
+              ? 1
+              : 0,
+        }}>
+        <FieldLabel
+          label={label}
+          inputID={inputID}
+          labelID={labelID}
+          isGroupLabel
+          isLabelHidden={isLabelHidden}
+          isDisabled={isDisabled}
+          isOptional={isOptional}
+          isRequired={isRequired}
+          labelTooltip={labelTooltip}
+          labelFontWeight={effectiveLabelFontWeight}
+          labelFontSize={effectiveLabelFontSize}
+          description={description}
+          descriptionID={description ? descriptionID : undefined}
+        />
       </div>
-      {showsDisabledMessage &&
-        disabledMessageTooltip.renderTooltip(disabledMessage)}
-    </Field>
+      <div>
+        {controlsNode}
+        {showsDisabledMessage &&
+          disabledMessageTooltip.renderTooltip(disabledMessage)}
+      </div>
+      {status?.message && (
+        <div style={{width: '100%', marginTop: '4px'}}>
+          <FieldStatus
+            type={status.type}
+            message={status.message}
+            id={status.message ? statusMessageID : undefined}
+            variant="detached"
+          />
+        </div>
+      )}
+    </div>
   );
 }
 

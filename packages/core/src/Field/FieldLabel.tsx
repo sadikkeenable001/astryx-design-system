@@ -161,6 +161,14 @@ export interface FieldLabelProps extends BaseProps<HTMLLabelElement> {
    * ID for the description element (for aria-describedby on the input).
    */
   descriptionID?: string;
+  /**
+   * Custom font weight for the label text (e.g. 'bold', '600', 600).
+   */
+  labelFontWeight?: React.CSSProperties['fontWeight'];
+  /**
+   * Custom font size for the label text (e.g. '12px', '0.75rem', '14px').
+   */
+  labelFontSize?: React.CSSProperties['fontSize'];
 }
 
 /**
@@ -189,6 +197,8 @@ export function FieldLabel({
   labelTooltip,
   description,
   descriptionID,
+  labelFontWeight,
+  labelFontSize,
   className,
   style,
   xstyle,
@@ -275,6 +285,12 @@ export function FieldLabel({
     </>
   );
 
+  const labelStyle: React.CSSProperties = {
+    ...(labelFontWeight != null ? {fontWeight: labelFontWeight} : {}),
+    ...(labelFontSize != null ? {fontSize: labelFontSize} : {}),
+    ...style,
+  };
+
   return (
     <>
       <LabelElement
@@ -300,7 +316,7 @@ export function FieldLabel({
             xstyle,
           ),
           className,
-          style,
+          labelStyle,
         )}>
         {labelContent}
       </LabelElement>
