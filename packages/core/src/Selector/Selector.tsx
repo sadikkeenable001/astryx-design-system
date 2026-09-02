@@ -30,7 +30,7 @@ import React, {
 } from 'react';
 import * as stylex from '@stylexjs/stylex';
 import {useTooltip} from '../Tooltip';
-import {Icon, renderIconSlot, type IconType} from '../Icon';
+import {Icon, renderIconSlot, type IconType, type IconColor} from '../Icon';
 import {useIndicator} from '../Indicator';
 import type {IndicatorPosition} from '../Indicator';
 import type {IconName} from '../Icon';
@@ -46,7 +46,6 @@ import {layerAnimations} from '../Layer/layerAnimations.stylex';
 import {useKeepLayerOpenProps, type LayerPlacement} from '../Layer/useLayer';
 import {InternalInputClearButton} from '../Field/InputClearButton';
 import {Spinner} from '../Spinner';
-import {PanelSearchInput} from '../Field/PanelSearchInput';
 import {useAnnounce} from '../hooks/useAnnounce';
 import {
   colorVars,
@@ -147,6 +146,40 @@ const styles = stylex.create({
     // The button must not draw its own :focus-visible outline or the two stack
     // into a doubled ring over the trigger.
     outline: 'none',
+  },
+  triggerInput: {
+    border: 'none',
+    borderWidth: 0,
+    borderStyle: 'none',
+    outline: 'none',
+    outlineStyle: 'none',
+    boxShadow: 'none',
+    backgroundColor: 'transparent',
+    width: '100%',
+    height: '100%',
+    padding: 0,
+    margin: 0,
+    fontFamily: 'inherit',
+    fontSize: 'inherit',
+    lineHeight: 'inherit',
+    color: 'inherit',
+    fontWeight: fontWeightVars['--font-weight-medium'],
+    '::placeholder': {
+      color: colorVars['--color-text-secondary'],
+      fontWeight: fontWeightVars['--font-weight-normal'],
+    },
+    ':focus': {
+      border: 'none',
+      borderWidth: 0,
+      outline: 'none',
+      boxShadow: 'none',
+    },
+    ':focus-visible': {
+      border: 'none',
+      borderWidth: 0,
+      outline: 'none',
+      boxShadow: 'none',
+    },
   },
   triggerPlaceholder: {
     color: colorVars['--color-text-secondary'],
@@ -266,18 +299,16 @@ const styles = stylex.create({
   // Dropdown container
   dropdown: {
     boxSizing: 'border-box',
-    maxHeight: '300px',
+    maxHeight: '225px',
     overflowY: 'auto',
     outline: 'none',
     paddingBlock: spacingVars['--spacing-1'],
-    paddingInline: spacingVars['--spacing-1'],
+    paddingInline: 0,
     opacity: 1,
     transition: `opacity ${durationVars['--duration-fast']}`,
   },
   dropdownInput: {
-    // The input trigger's text inset includes its border. Mirror that extra
-    // pixel in the menu; the borderless ghost variant needs no correction.
-    paddingInline: `calc(${spacingVars['--spacing-1']} + ${borderVars['--border-width']})`,
+    paddingInline: 0,
   },
   // Same correction for the search row's gutter, so the search field and the
   // option rows share one left edge.
@@ -375,7 +406,9 @@ const styles = stylex.create({
     backgroundColor: colorVars['--color-overlay-hover'],
   },
   itemSelected: {
-    fontWeight: fontWeightVars['--font-weight-medium'],
+    backgroundColor: colorVars['--color-accent-muted'],
+    color: colorVars['--color-text-primary'],
+    fontWeight: fontWeightVars['--font-weight-bold'],
   },
   itemDisabled: {
     opacity: 0.5,
@@ -420,13 +453,17 @@ const sizeStyles = stylex.create({
  */
 const itemSizeStyles = stylex.create({
   sm: {
-    paddingBlock: spacingVars['--spacing-1'],
+    paddingBlock: spacingVars['--spacing-1-5'],
     paddingInline: spacingVars['--spacing-2'],
   },
   md: {
-    paddingBlock: spacingVars['--spacing-1-5'],
+    paddingBlock: spacingVars['--spacing-2'],
+    paddingInline: spacingVars['--spacing-3'],
   },
-  lg: {},
+  lg: {
+    paddingBlock: spacingVars['--spacing-3'],
+    paddingInline: spacingVars['--spacing-4'],
+  },
 });
 
 const STATUS_ICON_MAP: Record<SelectorStatusType, IconName> = {
@@ -578,6 +615,58 @@ interface SelectorPropsBase<
    * @default 'attached' for input selectors; 'detached' for ghost selectors
    */
   statusVariant?: FieldStatusVariant;
+
+  /**
+   * Optional custom status adornment (e.g. checkmark icon or alert icon) rendered on the right side of the control.
+   */
+  statusAdornment?: ReactNode;
+
+  /**
+   * Whether to display the success checkmark icon on the right side when in a valid/success state.
+   */
+  showSuccessIcon?: boolean;
+
+  /** Alias for showSuccessIcon */
+  showCheckmark?: boolean;
+
+  /**
+   * Whether to apply the green (or custom) status border on valid/success state.
+   */
+  showSuccessBorder?: boolean;
+
+  /** Alias for showSuccessBorder */
+  showValidationBorder?: boolean;
+
+  /**
+   * Custom border color for success/valid state. Defaults to '#16a34a' (green-600).
+   */
+  successBorderColor?: string;
+
+  /**
+   * Variant of the checkmark icon when selected or valid.
+   * - 'check': simple checkmark icon (✓)
+   * - 'circle': filled green checkmark circle icon (✓ inside circle)
+   * @default 'check'
+   */
+  checkmarkVariant?: 'check' | 'circle';
+
+  /** Alias for successBorderColor */
+  validationBorderColor?: string;
+
+  /**
+   * Custom icon color for the success checkmark icon.
+   */
+  successIconColor?: string;
+
+  /**
+   * Convenience boolean flag indicating the field has valid data.
+   */
+  isValid?: boolean;
+
+  /**
+   * Convenience boolean flag indicating the field has invalid data.
+   */
+  isInvalid?: boolean;
 
   /**
    * Width of the field. Numbers are treated as pixels, strings are used as-is
@@ -835,6 +924,17 @@ export function Selector<T extends SelectorOptionType>(
     variant = 'input',
     status,
     statusVariant = 'attached',
+    statusAdornment,
+    showSuccessIcon,
+    showCheckmark,
+    showSuccessBorder,
+    showValidationBorder,
+    successBorderColor,
+    validationBorderColor,
+    successIconColor,
+    checkmarkVariant = 'check',
+    isValid,
+    isInvalid,
     labelTooltip,
     startIcon,
     htmlName,
@@ -877,6 +977,45 @@ export function Selector<T extends SelectorOptionType>(
 
   // Normalize null to undefined for internal use (null is the clear sentinel)
   const normalizedValue = value === null ? undefined : value;
+  const hasValue = normalizedValue != null && normalizedValue !== '';
+
+  const effectiveStatus: SelectorStatus | undefined = status
+    ? status
+    : isValid === true
+      ? {type: 'success'}
+      : isInvalid === true
+        ? {type: 'error'}
+        : undefined;
+
+  const isCheckmarkVisible =
+    showCheckmark === true ||
+    showSuccessIcon === true ||
+    (showCheckmark !== false &&
+      showSuccessIcon !== false &&
+      hasValue &&
+      (isValid === true ||
+        effectiveStatus?.type === 'success' ||
+        showCheckmark === undefined));
+
+  const isSuccessBorderVisible =
+    showSuccessBorder === true ||
+    showValidationBorder === true ||
+    (showSuccessBorder !== false &&
+      showValidationBorder !== false &&
+      hasValue &&
+      (isValid === true ||
+        effectiveStatus?.type === 'success' ||
+        showSuccessBorder === undefined));
+
+  const isSuccessState =
+    effectiveStatus?.type === 'success' ||
+    (hasValue && (isValid === true || isSuccessBorderVisible));
+
+  const resolvedBorderColor = isSuccessState
+    ? successBorderColor || validationBorderColor || '#16a34a'
+    : effectiveStatus?.type === 'error'
+      ? '#dc2626'
+      : undefined;
   const generatedTriggerId = useId();
   // A caller's `id` lands on the trigger either way, so the internal identity
   // has to be that same value or the label and listbox point at nothing.
@@ -1254,109 +1393,8 @@ export function Selector<T extends SelectorOptionType>(
 
   // Render search input
   const renderSearch = useCallback(() => {
-    if (!hasSearch) {
-      return null;
-    }
-    return (
-      <PanelSearchInput
-        ref={searchRef}
-        id={searchId}
-        // The search row is the panel's header: a magnifier, a borderless
-        // input, and the shared clear (✕) button. It deliberately does NOT
-        // render a bordered TextInput — the popup is already a bordered
-        // surface, and a field inside it drew a second box within that box.
-        label={t('@astryx.selector.searchOptions')}
-        // Same accessible name the TextInput's built-in clear produced
-        // ("Clear Search options"), so the affordance keeps its name while its
-        // chrome changes.
-        clearLabel={t('@astryx.textInput.clearLabel', {
-          label: t('@astryx.selector.searchOptions'),
-        })}
-        {...themeProps('selector-search')}
-        xstyle={
-          surface.activePresentation === 'popover' &&
-          variant !== 'ghost' &&
-          styles.searchRowInput
-        }
-        // When hasSearch is set, focus moves into this input on open, so it —
-        // not the trigger — must be the combobox that reports the highlighted
-        // option via aria-activedescendant (comboboxes-4). A bare searchbox
-        // left the highlight silent to screen readers.
-        role="combobox"
-        aria-expanded={surface.isOpen}
-        aria-controls={listboxId}
-        aria-autocomplete="list"
-        aria-activedescendant={
-          surface.isOpen && highlightedIndex >= 0
-            ? getItemId(highlightedIndex)
-            : undefined
-        }
-        value={searchQuery}
-        onValueChange={handleSearchChange}
-        onContainerKeyDown={e => {
-          // The clear (✕) button lives inside the row, after the input in DOM
-          // order. When it is focused and the user tabs forward there is
-          // nothing else in the popup, so dismiss it (Shift+Tab returns to the
-          // input natively). Key events originating on the input are handled on
-          // the input below; ignore them here so we don't double-dismiss.
-          if (e.target === searchRef.current) {
-            return;
-          }
-          if (e.key === 'Tab' && !e.shiftKey) {
-            onKeyDown(e);
-          }
-        }}
-        onKeyDown={e => {
-          // An in-progress IME composition uses these same keys (Enter to
-          // commit the candidate, Escape/Arrows to navigate the candidate
-          // window); the composing keydown fires before compositionend, so
-          // without this guard a Korean/Japanese/Chinese user committing a
-          // syllable with Enter would instead select the highlighted option.
-          // See utils/ime.ts.
-          if (isImeKeyEvent(e.nativeEvent)) {
-            return;
-          }
-          // Arrow keys navigate options; Enter selects; Escape closes.
-          // Home/End are left to the input for caret movement (APG editable
-          // combobox); PageUp/PageDown are the sanctioned substitute for
-          // jumping to the first/last option.
-          if (
-            e.key === 'ArrowDown' ||
-            e.key === 'ArrowUp' ||
-            e.key === 'PageUp' ||
-            e.key === 'PageDown' ||
-            e.key === 'Enter' ||
-            e.key === 'Escape'
-          ) {
-            onKeyDown(e);
-            return;
-          }
-          // Tab: when a query is showing the clear (✕) button, forward-tab
-          // moves focus to it (keeping the popup open) so the affordance is
-          // keyboard-reachable. Every other Tab dismisses the popup as usual.
-          if (e.key === 'Tab' && (e.shiftKey || !hasQuery)) {
-            onKeyDown(e);
-          }
-        }}
-        placeholder={searchPlaceholder}
-      />
-    );
-  }, [
-    hasSearch,
-    searchId,
-    listboxId,
-    searchQuery,
-    hasQuery,
-    searchPlaceholder,
-    handleSearchChange,
-    onKeyDown,
-    surface.isOpen,
-    surface.activePresentation,
-    highlightedIndex,
-    getItemId,
-    variant,
-    t,
-  ]);
+    return null;
+  }, []);
 
   // The single-selection mark, resolved from the theme once per render. A
   // theme that maps `check` to another indicator (a radio, say) changes every
@@ -1417,15 +1455,22 @@ export function Selector<T extends SelectorOptionType>(
           aria-disabled={item.disabled}
           onClick={() => onItemSelect(item)}
           onMouseEnter={() => onItemMouseEnter(item, flatIndex)}
+          style={{
+            padding:
+              size === 'sm'
+                ? '6px 10px'
+                : size === 'lg'
+                  ? '10px 14px'
+                  : '8px 12px',
+            minHeight: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: item.disabled ? 'default' : 'pointer',
+            borderRadius: '4px',
+            marginBlock: '1px',
+          }}
           {...mergeProps(
-            // Stable theme target on the option row itself, mirroring
-            // `multi-selector-option`: it carries the row's size and runtime
-            // state so a theme can express "selected option at large" or
-            // restyle a given row density without structural selectors. The
-            // row's padding is split across a base and a per-size override (the
-            // default `md` trims the block axis), so `size` is what a theme
-            // needs to reach it. Named `-option-row` because `selector-option`
-            // is the public SelectorOption content primitive, not this row.
             themeProps('selector-option-row', {
               size,
               selected: isSelected ? 'selected' : null,
@@ -1581,11 +1626,19 @@ export function Selector<T extends SelectorOptionType>(
   // What the closed trigger shows for the current selection: the option's icon
   // and label. `startIcon` wins over the option's own icon so a caller who
   // pins a field icon does not get two.
-  const isVerifiedBadge = isVerified && selectedItem ? (
-    <span style={{ color: '#22c55e', display: 'inline-flex', alignItems: 'center', marginLeft: '6px' }} title="Verified">
-      <Icon icon="check" size="sm" color="success" />
-    </span>
-  ) : null;
+  const isVerifiedBadge =
+    isVerified && selectedItem ? (
+      <span
+        style={{
+          color: '#22c55e',
+          display: 'inline-flex',
+          alignItems: 'center',
+          marginLeft: '6px',
+        }}
+        title="Verified">
+        <Icon icon="check" size="sm" color="success" />
+      </span>
+    ) : null;
 
   const valueContent =
     selectedItem && renderValue ? (
@@ -1612,18 +1665,34 @@ export function Selector<T extends SelectorOptionType>(
     );
 
   const effectivePanelFooter = footerCheckbox ? (
-    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '8px 12px', background: 'rgba(255,255,255,0.02)' }}>
-      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+    <div
+      style={{
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+        padding: '8px 12px',
+        background: 'rgba(255,255,255,0.02)',
+      }}>
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+          fontSize: '13px',
+        }}>
         <input
           type="checkbox"
           checked={footerCheckbox.value}
-          onChange={(e) => footerCheckbox.onChange(e.target.checked)}
+          onChange={e => footerCheckbox.onChange(e.target.checked)}
         />
         <span>{footerCheckbox.label}</span>
       </label>
     </div>
   ) : footer ? (
-    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '8px 12px' }}>
+    <div
+      style={{
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+        padding: '8px 12px',
+      }}>
       {footer}
     </div>
   ) : null;
@@ -1631,7 +1700,6 @@ export function Selector<T extends SelectorOptionType>(
   const panelContent = hasSearch ? (
     <div>
       {renderSearch()}
-      <Divider />
       <div
         ref={listboxRef}
         id={listboxId}
@@ -1719,11 +1787,20 @@ export function Selector<T extends SelectorOptionType>(
         onClick={onTriggerClick}
         data-testid={testId}
         data-astryx-selector="true"
+        style={{
+          ...(resolvedBorderColor
+            ? {
+                borderColor: `${resolvedBorderColor} !important`,
+                boxShadow: `0 0 0 1px ${resolvedBorderColor} !important`,
+              }
+            : {}),
+          ...style,
+        }}
         {...mergeProps(
           themeProps('selector', {
             variant,
             size,
-            status: status?.type ?? null,
+            status: effectiveStatus?.type ?? null,
             disabled: isDisabled ? 'disabled' : null,
           }),
           stylex.props(
@@ -1739,72 +1816,150 @@ export function Selector<T extends SelectorOptionType>(
             variant === 'ghost' && isDisabled && styles.triggerGhostDisabled,
             !selectedItem && styles.triggerPlaceholder,
             variant !== 'ghost' &&
-              status &&
-              inputStatusBorderStyles[status.type],
+              effectiveStatus &&
+              inputStatusBorderStyles[effectiveStatus.type],
             variant !== 'ghost' &&
-              status &&
+              effectiveStatus &&
               !isDisabled &&
-              inputStatusHoverShadowStyles[status.type],
+              inputStatusHoverShadowStyles[effectiveStatus.type],
             variant !== 'ghost' && inputGroup && groupStyles.inGroup,
             inputGroup && styles.triggerInGroup,
             xstyle,
           ),
           className,
-          style,
         )}>
         {startIcon &&
           renderIconSlot(startIcon, {size: 'sm', color: 'secondary'})}
         {inputGroup && (
           <VisuallyHidden id={inputLabelId}>{label}</VisuallyHidden>
         )}
-        <button
-          ref={triggerRef}
-          id={triggerId}
-          type="button"
-          // In hasSearch mode the popup's search input is the combobox (it owns
-          // focus + aria-activedescendant, comboboxes-4), so the trigger is a
-          // plain button that opens the listbox — not a second combobox.
-          role={hasSearch ? undefined : 'combobox'}
-          {...rest}
-          aria-haspopup={
-            surface.activePresentation === 'bottom-sheet' ? 'dialog' : 'listbox'
-          }
-          aria-expanded={surface.isOpen}
-          aria-controls={listboxId}
-          aria-activedescendant={
-            !hasSearch && surface.isOpen && highlightedIndex >= 0
-              ? getItemId(highlightedIndex)
-              : undefined
-          }
-          aria-describedby={ariaDescribedBy}
-          aria-labelledby={ariaLabelledBy}
-          aria-required={isEffectivelyRequired ? 'true' : undefined}
-          aria-invalid={status?.type === 'error' ? 'true' : undefined}
-          aria-busy={isBusy || undefined}
-          // With a disabledMessage the trigger keeps focusability via
-          // aria-disabled so the reason is focus-discoverable; activation is
-          // still blocked by the isDisabled guards in useCombobox.
-          disabled={isDisabled && !showsDisabledMessage}
-          aria-disabled={showsDisabledMessage ? 'true' : undefined}
-          onKeyDown={handleTriggerKeyDown}
-          onFocus={event => {
-            onFocus?.(event);
-            surface.onTriggerFocus(event);
-          }}
-          tabIndex={isDisabled && !showsDisabledMessage ? -1 : 0}
-          {...stylex.props(
-            styles.trigger,
-            inputGroup && styles.triggerButtonInGroup,
-          )}>
-          {valueContent}
-        </button>
+        {hasSearch ? (
+          <input
+            {...stylex.props(
+              styles.triggerInput,
+              inputGroup && styles.triggerButtonInGroup,
+            )}
+            data-astryx-selector-input="true"
+            ref={triggerRef as unknown as React.Ref<HTMLInputElement>}
+            id={triggerId}
+            type="text"
+            role="combobox"
+            aria-haspopup={
+              surface.activePresentation === 'bottom-sheet'
+                ? 'dialog'
+                : 'listbox'
+            }
+            aria-expanded={surface.isOpen}
+            aria-controls={listboxId}
+            aria-activedescendant={
+              surface.isOpen && highlightedIndex >= 0
+                ? getItemId(highlightedIndex)
+                : undefined
+            }
+            aria-describedby={ariaDescribedBy}
+            aria-labelledby={ariaLabelledBy}
+            aria-required={isEffectivelyRequired ? 'true' : undefined}
+            aria-invalid={
+              effectiveStatus?.type === 'error' ? 'true' : undefined
+            }
+            aria-busy={isBusy || undefined}
+            disabled={isDisabled && !showsDisabledMessage}
+            aria-disabled={showsDisabledMessage ? 'true' : undefined}
+            placeholder={
+              placeholder ??
+              searchPlaceholder ??
+              t('@astryx.selector.searchPlaceholder')
+            }
+            value={
+              surface.isOpen
+                ? searchQuery
+                : selectedItem
+                  ? String(selectedItem.label)
+                  : searchQuery
+            }
+            onChange={e => {
+              const val = e.target.value;
+              handleSearchChange(val);
+              if (!surface.isOpen) {
+                surface.show();
+              }
+            }}
+            onClick={() => {
+              if (!surface.isOpen) {
+                surface.show();
+              }
+            }}
+            onFocus={event => {
+              onFocus?.(event);
+              surface.onTriggerFocus(event);
+              if (!surface.isOpen) {
+                surface.show();
+              }
+            }}
+            onKeyDown={handleTriggerKeyDown}
+            tabIndex={isDisabled && !showsDisabledMessage ? -1 : 0}
+            className="!border-0 !border-none !outline-none !shadow-none !bg-transparent !w-full !h-full !p-0 !m-0 !ring-0 focus:!border-none focus:!outline-none focus:!shadow-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0"
+            style={{
+              border: '0px none transparent',
+              borderWidth: 0,
+              borderStyle: 'none',
+              outline: 'none',
+              boxShadow: 'none',
+              background: 'transparent',
+              backgroundColor: 'transparent',
+              width: '100%',
+              height: '100%',
+              padding: 0,
+              margin: 0,
+              borderRadius: 0,
+            }}
+          />
+        ) : (
+          <button
+            ref={triggerRef}
+            id={triggerId}
+            type="button"
+            role="combobox"
+            {...rest}
+            aria-haspopup={
+              surface.activePresentation === 'bottom-sheet'
+                ? 'dialog'
+                : 'listbox'
+            }
+            aria-expanded={surface.isOpen}
+            aria-controls={listboxId}
+            aria-activedescendant={
+              surface.isOpen && highlightedIndex >= 0
+                ? getItemId(highlightedIndex)
+                : undefined
+            }
+            aria-describedby={ariaDescribedBy}
+            aria-labelledby={ariaLabelledBy}
+            aria-required={isEffectivelyRequired ? 'true' : undefined}
+            aria-invalid={
+              effectiveStatus?.type === 'error' ? 'true' : undefined
+            }
+            aria-busy={isBusy || undefined}
+            disabled={isDisabled && !showsDisabledMessage}
+            aria-disabled={showsDisabledMessage ? 'true' : undefined}
+            onKeyDown={handleTriggerKeyDown}
+            onFocus={event => {
+              onFocus?.(event);
+              surface.onTriggerFocus(event);
+            }}
+            tabIndex={isDisabled && !showsDisabledMessage ? -1 : 0}
+            {...stylex.props(
+              styles.trigger,
+              inputGroup && styles.triggerButtonInGroup,
+            )}>
+            {valueContent}
+          </button>
+        )}
         {htmlName != null && (
           <input
             type="hidden"
             name={htmlName}
             value={value ?? ''}
-            // Disabled native controls are excluded from form submission;
-            // mirror that for the hidden carrier.
             disabled={isDisabled}
           />
         )}
@@ -1817,63 +1972,52 @@ export function Selector<T extends SelectorOptionType>(
             iconClassName={stableClassName('selector-clear-icon')}
           />
         )}
-        {/*
-          No wrapper span: Icon's own span already provides the 16px box (`sm`)
-          and the icon color, so the status glyph and the chevron are each
-          directly targetable instead of sharing one untargetable parent — and
-          the two affordances stop sharing a node.
-        */}
-        {showStatusIcon ? (
-          showStatusTooltip ? (
-            <button
-              ref={statusTooltip.ref}
-              type="button"
-              aria-label={t(STATUS_BUTTON_LABEL_KEY[status.type])}
-              aria-describedby={statusTooltip.describedBy}
-              {...keepOpenProps}
-              onClick={e => e.stopPropagation()}
-              {...stylex.props(
-                focusOutlineStyles.focusVisible,
-                styles.statusButton,
-              )}>
-              <Icon
-                icon={STATUS_ICON_MAP[status.type]}
-                size="sm"
-                color={STATUS_ICON_COLOR_MAP[status.type]}
-                xstyle={styles.triggerIcon}
-              />
-            </button>
-          ) : (
-            <Icon
-              icon={STATUS_ICON_MAP[status.type]}
-              size="sm"
-              color={STATUS_ICON_COLOR_MAP[status.type]}
-              xstyle={styles.triggerIcon}
-            />
-          )
-        ) : (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            marginLeft: 'auto',
+            flexShrink: 0,
+          }}>
           <Icon
             icon="chevronDown"
             size="sm"
             color="secondary"
-            // The rotation rides on the glyph, alongside the box and color
-            // the wrapper used to provide, so one element carries the mark,
-            // its open/closed transform, and the theme target.
             xstyle={[
               styles.triggerIcon,
               styles.triggerIconRotation,
               surface.isOpen && styles.triggerIconOpen,
             ]}
-            // Stable theme target on the chevron glyph itself, so a theme can
-            // restyle just this icon (color, size, hover) — and its
-            // open/closed state — via `defineTheme`. Same-element rules in
-            // @layer astryx-theme win over the icon's own base color/size,
-            // which a button-level target could not reach.
             {...themeProps('selector-indicator-icon', {
               state: surface.isOpen ? 'expanded' : 'collapsed',
             })}
           />
-        )}
+          {statusAdornment ? (
+            statusAdornment
+          ) : isCheckmarkVisible ? (
+            <Icon
+              icon={checkmarkVariant === 'circle' ? 'success' : 'check'}
+              size="sm"
+              color={(successIconColor as IconColor) || 'success'}
+              xstyle={styles.triggerIcon}
+            />
+          ) : effectiveStatus?.type === 'error' ? (
+            <Icon
+              icon="error"
+              size="sm"
+              color="error"
+              xstyle={styles.triggerIcon}
+            />
+          ) : effectiveStatus?.type === 'warning' ? (
+            <Icon
+              icon="warning"
+              size="sm"
+              color="warning"
+              xstyle={styles.triggerIcon}
+            />
+          ) : null}
+        </div>
       </div>
 
       {selectionSurface}
