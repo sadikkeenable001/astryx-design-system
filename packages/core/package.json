@@ -354,6 +354,11 @@
       "types": "./dist/Markdown/index.d.ts",
       "default": "./dist/Markdown/index.js"
     },
+    "./Marquee": {
+      "source": "./src/Marquee/index.ts",
+      "types": "./dist/Marquee/index.d.ts",
+      "default": "./dist/Marquee/index.js"
+    },
     "./MetadataList": {
       "source": "./src/MetadataList/index.ts",
       "types": "./dist/MetadataList/index.d.ts",
