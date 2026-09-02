@@ -170,6 +170,14 @@ export interface FieldProps extends Omit<
    */
   width?: SizeValue;
   /**
+   * Custom font weight for the label text.
+   */
+  labelFontWeight?: React.CSSProperties['fontWeight'];
+  /**
+   * Custom font size for the label text.
+   */
+  labelFontSize?: React.CSSProperties['fontSize'];
+  /**
    * The input or control to render inside the field.
    */
   children: ReactNode;
@@ -201,6 +209,8 @@ export function Field({
   labelIcon,
   status,
   labelTooltip,
+  labelFontWeight,
+  labelFontSize,
   statusVariant = 'attached',
   width,
   xstyle,
@@ -236,6 +246,8 @@ export function Field({
       isRequired={isRequired}
       labelIcon={labelIcon}
       labelTooltip={labelTooltip}
+      labelFontWeight={labelFontWeight}
+      labelFontSize={labelFontSize}
       description={isHorizontalLabels ? undefined : description}
       descriptionID={isHorizontalLabels ? undefined : resolvedDescriptionID}
     />
