@@ -407,7 +407,8 @@ export function useCombobox({
             onSearchSeed &&
             e.key.length === 1 &&
             !e.ctrlKey &&
-            !e.metaKey
+            !e.metaKey &&
+            !(e.target instanceof HTMLInputElement)
           ) {
             if (!isOpen) {
               onOpen();

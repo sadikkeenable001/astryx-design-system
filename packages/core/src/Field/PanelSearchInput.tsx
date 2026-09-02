@@ -49,6 +49,7 @@ import {
   trackInteractionModality,
 } from '../utils/interactionModality';
 import {
+  borderVars,
   colorVars,
   durationVars,
   easeVars,
@@ -66,9 +67,7 @@ const styles = stylex.create({
     paddingBlock: spacingVars['--spacing-1'],
     paddingInline: spacingVars['--spacing-1'],
   },
-  // The field proper — the same box an option row draws: `--radius-element`
-  // corners and, at md, a 6/8 padding pair that lands it on the option row's
-  // 32px height. Focus rings THIS, not the full-width row.
+  // The field proper — a rounded, bordered input box matching standard fields
   field: {
     boxSizing: 'border-box',
     display: 'flex',
@@ -78,27 +77,22 @@ const styles = stylex.create({
     paddingBlock: spacingVars['--spacing-1-5'],
     paddingInline: spacingVars['--spacing-2'],
     borderRadius: radiusVars['--radius-element'],
-    transitionProperty: 'box-shadow',
+    borderWidth: borderVars['--border-width'],
+    borderStyle: 'solid',
+    borderColor: colorVars['--color-border'],
+    backgroundColor: colorVars['--color-background-surface'],
+    transitionProperty: 'box-shadow, border-color',
     transitionDuration: {
       default: durationVars['--duration-fast'],
       '@media (prefers-reduced-motion: reduce)': '0s',
     },
     transitionTimingFunction: easeVars['--ease-standard'],
   },
-  // The focus ring, applied only while focus was taken by keyboard (see
-  // `isKeyboardFocus`). `:has(input:focus-visible)` stays the CSS condition —
-  // the browser's heuristic still decides, this only narrows it — and rings
-  // the field rather than the bare <input> so the magnifier and the clear
-  // button sit inside it, and so tabbing ONTO the clear button does not
-  // re-ring the field.
-  //
-  // Inset, not the shared 3px-offset outline: the field is inset 4-5px from
-  // the panel edge, so an outline at that offset would land on the panel's own
-  // border and the divider. Measured, not guessed.
   fieldKeyboardFocus: {
+    borderColor: colorVars['--color-accent'],
     boxShadow: {
       default: 'none',
-      ':has(input:focus-visible)': `inset 0 0 0 2px ${colorVars['--color-accent']}`,
+      ':has(input:focus-visible)': `0 0 0 1px ${colorVars['--color-accent']}`,
     },
   },
   // The icon span needs explicit flex centering to avoid a line-height offset.

@@ -43,7 +43,7 @@ import {
   inputStatusFocusWithinStyles,
   type FieldStatusVariant,
 } from '../Field';
-import {renderIconSlot, type IconType} from '../Icon';
+import {Icon, renderIconSlot, type IconType, type IconColor} from '../Icon';
 import {Spinner} from '../Spinner';
 import {useTooltip} from '../Tooltip';
 import {VisuallyHidden} from '../VisuallyHidden';
@@ -199,6 +199,26 @@ export interface TextInputProps extends Omit<
    * @default 'attached'
    */
   statusVariant?: FieldStatusVariant;
+  /** Custom status adornment (e.g. checkmark or alert icon) rendered on the right */
+  statusAdornment?: ReactNode;
+  /** Whether to render green checkmark icon when valid/success */
+  showSuccessIcon?: boolean;
+  /** Alias for showSuccessIcon */
+  showCheckmark?: boolean;
+  /** Whether to apply green (or custom) border when valid/success */
+  showSuccessBorder?: boolean;
+  /** Alias for showSuccessBorder */
+  showValidationBorder?: boolean;
+  /** Custom border color for success/valid state. Defaults to '#16a34a' */
+  successBorderColor?: string;
+  /** Alias for successBorderColor */
+  validationBorderColor?: string;
+  /** Custom icon color for the success checkmark icon */
+  successIconColor?: string;
+  /** Convenience boolean flag for valid state */
+  isValid?: boolean;
+  /** Convenience boolean flag for invalid state */
+  isInvalid?: boolean;
   /**
    * The size of the input.
    * - 'sm': Compact size (18px height)
@@ -283,6 +303,16 @@ export function TextInput({
   startIcon,
   status,
   statusVariant = 'attached',
+  statusAdornment,
+  showSuccessIcon,
+  showCheckmark,
+  showSuccessBorder,
+  showValidationBorder,
+  successBorderColor,
+  validationBorderColor,
+  successIconColor,
+  isValid,
+  isInvalid,
   size: sizeProp,
   onChange,
   changeAction,
@@ -305,6 +335,26 @@ export function TextInput({
   const t = useTranslator();
   const isEffectivelyRequired = useResolvedRequired({isRequired, isOptional});
   const size = useSize(sizeProp, 'md');
+
+  const effectiveStatus: InputStatus | undefined = status
+    ? status
+    : isValid === true
+      ? {type: 'success'}
+      : isInvalid === true
+        ? {type: 'error'}
+        : undefined;
+
+  const isSuccessState =
+    effectiveStatus?.type === 'success' ||
+    isValid === true ||
+    showSuccessBorder === true ||
+    showValidationBorder === true;
+
+  const resolvedBorderColor = isSuccessState
+    ? successBorderColor || validationBorderColor || '#16a34a'
+    : effectiveStatus?.type === 'error'
+      ? '#dc2626'
+      : undefined;
 
   const id = useId();
   const inputLabelID = useId();
@@ -398,10 +448,19 @@ export function TextInput({
       }}
       onClick={handleWrapperClick}
       onMouseUp={handleWrapperMouseUp}
+      style={{
+        ...(resolvedBorderColor
+          ? {
+              borderColor: `${resolvedBorderColor} !important`,
+              boxShadow: `0 0 0 1px ${resolvedBorderColor} !important`,
+            }
+          : {}),
+        ...style,
+      }}
       {...mergeProps(
         themeProps('text-input', {
           size,
-          status: status?.type ?? null,
+          status: effectiveStatus?.type ?? null,
           disabled: isDisabled ? 'disabled' : null,
           readonly: isReadOnly ? 'readonly' : null,
         }),
@@ -409,14 +468,15 @@ export function TextInput({
           inputWrapperStyles.base,
           sizeStyles[size],
           isDisabled && inputWrapperStyles.disabled,
-          status && inputStatusBorderStyles[status.type],
-          status && !isDisabled && inputStatusHoverShadowStyles[status.type],
-          status && inputStatusFocusWithinStyles[status.type],
+          effectiveStatus && inputStatusBorderStyles[effectiveStatus.type],
+          effectiveStatus &&
+            !isDisabled &&
+            inputStatusHoverShadowStyles[effectiveStatus.type],
+          effectiveStatus && inputStatusFocusWithinStyles[effectiveStatus.type],
           inputGroup && groupStyles.inGroup,
           xstyle,
         ),
         className,
-        style,
       )}>
       {startIcon && renderIconSlot(startIcon, {size: 'sm', color: 'secondary'})}
       {inputGroup && <VisuallyHidden id={inputLabelID}>{label}</VisuallyHidden>}
@@ -439,9 +499,6 @@ export function TextInput({
             : undefined
         }
         placeholder={placeholder}
-        // With a disabledMessage the input keeps focusability via aria-disabled
-        // so the reason is focus-discoverable; readOnly + the handleChange guard
-        // keep the value from changing.
         disabled={isDisabled && !showsDisabledMessage}
         aria-disabled={showsDisabledMessage ? 'true' : undefined}
         readOnly={isReadOnly || showsDisabledMessage || undefined}
@@ -449,7 +506,7 @@ export function TextInput({
         data-autofocus={hasAutoFocus || undefined}
         aria-describedby={ariaDescribedBy}
         aria-required={isEffectivelyRequired ? 'true' : undefined}
-        aria-invalid={status?.type === 'error' ? 'true' : undefined}
+        aria-invalid={effectiveStatus?.type === 'error' ? 'true' : undefined}
         aria-busy={isBusy || undefined}
         aria-labelledby={ariaLabelledBy}
         {...stylex.props(styles.input, isDisabled && styles.inputDisabled)}
@@ -461,7 +518,17 @@ export function TextInput({
         />
       )}
       {isBusy && <Spinner size="sm" />}
-      {statusIcon}
+      {statusAdornment ? (
+        statusAdornment
+      ) : isSuccessState || showSuccessIcon || showCheckmark ? (
+        <Icon
+          icon="check"
+          size="sm"
+          color={(successIconColor as IconColor) || 'success'}
+        />
+      ) : (
+        statusIcon
+      )}
     </div>
   );
 
