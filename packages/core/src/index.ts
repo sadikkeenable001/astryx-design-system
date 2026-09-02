@@ -63,6 +63,7 @@ export * from './DateTimeInput';
 export * from './DateRangeInput';
 export * from './Field';
 export * from './FileInput';
+export * from './DocumentUploader';
 export * from './FormLayout';
 export * from './Grid';
 export * from './Section';
@@ -107,6 +108,13 @@ export * from './ProgressBar';
 
 // Layout utilities and components (includes HStack, VStack)
 export * from './Layout';
+
+// Generic Form & Review Controls
+export * from './MaskedInput';
+export * from './OtpInput';
+export * from './ImageUploader';
+export * from './CanvasCaptcha';
+export * from './KeyValueGrid';
 
 // Layer utilities (useLayer hook and core types)
 export {useLayer} from './Layer';

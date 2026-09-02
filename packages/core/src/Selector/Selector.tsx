@@ -669,6 +669,26 @@ interface SelectorPropsBase<
   emptySearchText?: ReactNode;
 
   /**
+   * Whether to render a verified checkmark badge inside the closed trigger when a value is selected.
+   * @default false
+   */
+  isVerified?: boolean;
+
+  /**
+   * Optional custom footer content to render inside the selector popover panel.
+   */
+  footer?: ReactNode;
+
+  /**
+   * Optional footer checkbox configuration rendered at the bottom of the popover panel.
+   */
+  footerCheckbox?: {
+    label: string;
+    value: boolean;
+    onChange: (checked: boolean) => void;
+  };
+
+  /**
    * Position placement relative to the trigger.
    *
    * Omit to use the selector's default selected-item overlay behavior: the
@@ -825,6 +845,9 @@ export function Selector<T extends SelectorOptionType>(
     searchPlaceholder: searchPlaceholderFromProps,
     emptyText: emptyTextFromProps,
     emptySearchText: emptySearchTextFromProps,
+    isVerified = false,
+    footer,
+    footerCheckbox,
     placement,
     presentation = 'popover',
     isDefaultOpen = false,
@@ -1558,6 +1581,12 @@ export function Selector<T extends SelectorOptionType>(
   // What the closed trigger shows for the current selection: the option's icon
   // and label. `startIcon` wins over the option's own icon so a caller who
   // pins a field icon does not get two.
+  const isVerifiedBadge = isVerified && selectedItem ? (
+    <span style={{ color: '#22c55e', display: 'inline-flex', alignItems: 'center', marginLeft: '6px' }} title="Verified">
+      <Icon icon="check" size="sm" color="success" />
+    </span>
+  ) : null;
+
   const valueContent =
     selectedItem && renderValue ? (
       <SelectorRowLayoutContext value={rowLayout}>
@@ -1567,6 +1596,7 @@ export function Selector<T extends SelectorOptionType>(
             inputGroup && styles.triggerValueInGroup,
           )}>
           {renderValue(selectedItem)}
+          {isVerifiedBadge}
         </span>
       </SelectorRowLayoutContext>
     ) : (
@@ -1577,8 +1607,26 @@ export function Selector<T extends SelectorOptionType>(
         <span {...stylex.props(styles.triggerLabel)}>
           {selectedItem?.label ?? placeholder}
         </span>
+        {isVerifiedBadge}
       </>
     );
+
+  const effectivePanelFooter = footerCheckbox ? (
+    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '8px 12px', background: 'rgba(255,255,255,0.02)' }}>
+      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+        <input
+          type="checkbox"
+          checked={footerCheckbox.value}
+          onChange={(e) => footerCheckbox.onChange(e.target.checked)}
+        />
+        <span>{footerCheckbox.label}</span>
+      </label>
+    </div>
+  ) : footer ? (
+    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '8px 12px' }}>
+      {footer}
+    </div>
+  ) : null;
 
   const panelContent = hasSearch ? (
     <div>
@@ -1597,34 +1645,38 @@ export function Selector<T extends SelectorOptionType>(
         )}>
         {renderOptions()}
       </div>
+      {effectivePanelFooter}
     </div>
   ) : (
-    <div
-      ref={listboxRef}
-      id={listboxId}
-      role="listbox"
-      aria-labelledby={triggerId}
-      aria-activedescendant={
-        surface.isOpen && highlightedIndex >= 0
-          ? getItemId(highlightedIndex)
-          : undefined
-      }
-      tabIndex={surface.activePresentation === 'bottom-sheet' ? 0 : undefined}
-      onKeyDown={
-        surface.activePresentation === 'bottom-sheet'
-          ? handleTriggerKeyDown
-          : undefined
-      }
-      {...stylex.props(
-        styles.dropdown,
-        surface.activePresentation === 'popover' &&
-          variant !== 'ghost' &&
-          styles.dropdownInput,
-        surface.activePresentation === 'popover' &&
-          !isPositioned &&
-          styles.dropdownHidden,
-      )}>
-      {renderOptions()}
+    <div>
+      <div
+        ref={listboxRef}
+        id={listboxId}
+        role="listbox"
+        aria-labelledby={triggerId}
+        aria-activedescendant={
+          surface.isOpen && highlightedIndex >= 0
+            ? getItemId(highlightedIndex)
+            : undefined
+        }
+        tabIndex={surface.activePresentation === 'bottom-sheet' ? 0 : undefined}
+        onKeyDown={
+          surface.activePresentation === 'bottom-sheet'
+            ? handleTriggerKeyDown
+            : undefined
+        }
+        {...stylex.props(
+          styles.dropdown,
+          surface.activePresentation === 'popover' &&
+            variant !== 'ghost' &&
+            styles.dropdownInput,
+          surface.activePresentation === 'popover' &&
+            !isPositioned &&
+            styles.dropdownHidden,
+        )}>
+        {renderOptions()}
+      </div>
+      {effectivePanelFooter}
     </div>
   );
 
@@ -1666,6 +1718,7 @@ export function Selector<T extends SelectorOptionType>(
         }}
         onClick={onTriggerClick}
         data-testid={testId}
+        data-astryx-selector="true"
         {...mergeProps(
           themeProps('selector', {
             variant,

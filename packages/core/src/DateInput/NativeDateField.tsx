@@ -29,6 +29,7 @@
 import {useCallback, useEffect, useId, useRef, useState} from 'react';
 import * as stylex from '@stylexjs/stylex';
 import {useCalendarConstraints} from '../Calendar';
+import type {TimestampFormat} from '../Timestamp';
 import type {DateInputProps} from './DateInput';
 import {hasEditableDateSegments} from './nativeDateSegments';
 import {
@@ -332,7 +333,20 @@ export function NativeDateField({
     (iso: ISODateString): string =>
       typeof format === 'function'
         ? format(iso)
-        : formatSharedDate(plainDateFromISO(iso), format, locale),
+        : format === 'raw' || format === 'DD/MM/YYYY'
+          ? (iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso.split('-')[2]}/${iso.split('-')[1]}/${iso.split('-')[0]}` : iso || '')
+          : format === 'MM/DD/YYYY'
+            ? (iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso.split('-')[1]}/${iso.split('-')[2]}/${iso.split('-')[0]}` : iso || '')
+            : format === 'YYYY-MM-DD'
+              ? iso
+              : formatSharedDate(
+                  plainDateFromISO(iso),
+                  format as Extract<
+                    TimestampFormat,
+                    'date' | 'date_long' | 'date_weekday' | 'system_date'
+                  >,
+                  locale,
+                ),
     [format, locale],
   );
 

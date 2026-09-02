@@ -127,7 +127,21 @@ export function parseDateInput(
     return parseNumericDate(+first, +second, currentYear, locale);
   }
 
-  // 6. Fall back to native Date parsing for other formats.
+  // 6. Try 8-digit or 6-digit raw numeric formats without separators (e.g. 12122020 or 121220)
+  const raw8DigitsMatch = trimmed.match(/^(\d{2})(\d{2})(\d{4})$/);
+  if (raw8DigitsMatch) {
+    const [, first, second, year] = raw8DigitsMatch;
+    return parseNumericDate(+first, +second, +year, locale);
+  }
+
+  const raw6DigitsMatch = trimmed.match(/^(\d{2})(\d{2})(\d{2})$/);
+  if (raw6DigitsMatch) {
+    const [, first, second, yr2] = raw6DigitsMatch;
+    const fullYear = +yr2 < 50 ? 2000 + +yr2 : 1900 + +yr2;
+    return parseNumericDate(+first, +second, fullYear, locale);
+  }
+
+  // 7. Fall back to native Date parsing for other formats.
   //
   // Skip bare numeric input (e.g. "0", "1", "01", "2026"). These are
   // in-progress values a user is still typing, not complete dates. Native
