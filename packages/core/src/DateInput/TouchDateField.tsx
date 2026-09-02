@@ -718,7 +718,13 @@ export function TouchDateField({
     optimisticValue != null && /^\d{4}-\d{2}-\d{2}$/.test(optimisticValue)
       ? typeof format === 'function'
         ? format(optimisticValue)
-        : formatSharedDate(plainDateFromISO(optimisticValue), format, locale)
+        : format === 'raw' || format === 'DD/MM/YYYY'
+          ? `${optimisticValue.split('-')[2]}/${optimisticValue.split('-')[1]}/${optimisticValue.split('-')[0]}`
+          : format === 'MM/DD/YYYY'
+            ? `${optimisticValue.split('-')[1]}/${optimisticValue.split('-')[2]}/${optimisticValue.split('-')[0]}`
+            : format === 'YYYY-MM-DD'
+              ? optimisticValue
+              : formatSharedDate(plainDateFromISO(optimisticValue), format as any, locale)
       : '';
 
   const fireChange = useCallback(

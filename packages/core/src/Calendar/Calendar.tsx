@@ -179,6 +179,20 @@ interface CalendarBaseProps extends Omit<
    * Default: 0 (Sunday)
    */
   weekStartsOn?: DayOfWeek | DayOfWeekName;
+
+  /**
+   * Optional footer content rendered below the calendar grid (e.g. action buttons or custom checkbox).
+   */
+  footer?: React.ReactNode;
+
+  /**
+   * Optional footer checkbox configuration rendered below the calendar grid.
+   */
+  footerCheckbox?: {
+    label: string;
+    value: boolean;
+    onChange: (checked: boolean) => void;
+  };
 }
 
 // ─── Mode-specific Props (discriminated union) ────────────────
@@ -246,6 +260,8 @@ export function Calendar({ref, ...props}: CalendarProps) {
     hasWeekNumbers = false,
     hasVariableRowCount = false,
     weekStartsOn: weekStartsOnProp = 0,
+    footer,
+    footerCheckbox,
     xstyle,
     className,
     style,
@@ -596,6 +612,23 @@ export function Calendar({ref, ...props}: CalendarProps) {
           />
         ))}
       </div>
+      {(footerCheckbox || footer) && (
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px', marginTop: '8px' }}>
+          {footerCheckbox ? (
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer', userSelect: 'none', color: '#e2e8f0' }}>
+              <input
+                type="checkbox"
+                checked={footerCheckbox.value}
+                onChange={(e) => footerCheckbox.onChange(e.target.checked)}
+                style={{ accentColor: '#38bdf8', cursor: 'pointer' }}
+              />
+              <span>{footerCheckbox.label}</span>
+            </label>
+          ) : (
+            footer
+          )}
+        </div>
+      )}
     </div>
   );
 }

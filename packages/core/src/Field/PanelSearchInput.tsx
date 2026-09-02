@@ -239,8 +239,10 @@ export function PanelSearchInput({
   return (
     <div
       onKeyDown={onContainerKeyDown}
+      data-astryx-panel-search-wrapper="true"
       {...mergeProps(stylex.props(styles.wrapper, xstyle), className, style)}>
       <div
+        data-astryx-panel-search="true"
         data-keyboard-focus={isKeyboardFocus ? 'true' : undefined}
         {...stylex.props(
           styles.field,
