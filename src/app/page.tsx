@@ -19,6 +19,7 @@ import {
   RadioList,
   RadioListItem,
   KeyValueGrid,
+  formatDateWithWords,
   Button,
   Card,
   Badge,
@@ -881,76 +882,168 @@ export default function ShowcasePage() {
             ============================================================================= */}
         {activeStep === 4 && (
           <div className="space-y-6">
-            <Card className="bg-white border border-slate-300 rounded-xl p-6 shadow-sm">
-              <VStack gap={4}>
-                <div className="border-b pb-3">
-                  <Heading level={3} className="text-lg font-bold text-slate-900">
-                    Step 5: Review & Confirm Application Summary
-                  </Heading>
-                  <Text className="text-slate-600 text-sm">
-                    Verify all candidate information before locking and submitting URN application.
-                  </Text>
-                </div>
+            <div className="bg-white border border-slate-300 rounded-xl p-5 shadow-sm">
+              <Heading level={3} className="text-lg font-bold text-slate-900">
+                Step 5: Review & Confirm Application Summary
+              </Heading>
+              <Text className="text-slate-600 text-sm mt-1">
+                Verify all candidate information before locking and submitting URN application.
+              </Text>
+            </div>
 
-                {/* Identity Summary Card */}
-                <KeyValueGrid
-                  title="1. Personal Identity Details"
-                  columns={3}
-                  actionSlot={
-                    <Button label="Edit Identity" size="sm" variant="secondary" onClick={() => setActiveStep(1)}>
-                      Edit Section
-                    </Button>
+            {/* Identity Summary Card */}
+            <KeyValueGrid
+              title="1. Personal Identity Details Summary"
+              variant="table"
+              headerVariant="banner"
+              items={[
+                {
+                  type: 'colHeader',
+                  label: 'Name',
+                  colHeaderLabels: [
+                    'Name',
+                    'Name (Candidate Input)',
+                    'Name as per 10th Class/ Matriculation/ Equivalent Board Passing Certificate'
+                  ]
+                },
+                {
+                  label: 'First Name',
+                  value: firstName || 'RAHUL',
+                  v2: confirmFirstName || firstName || 'RAHUL'
+                },
+                {
+                  label: 'Middle Name',
+                  value: middleName || '-',
+                  v2: confirmMiddleName || middleName || '-'
+                },
+                {
+                  label: 'Last Name',
+                  value: lastName || 'SHARMA',
+                  v2: confirmLastName || lastName || 'SHARMA'
+                },
+                ...(isSameAsCurrent === 'false' ? [
+                  {
+                    type: 'fullText' as const,
+                    label: 'Provisional Name Change Declaration: Candidate changed name after matriculation.'
+                  },
+                  {
+                    label: 'Gazette Notification Doc',
+                    docPreview: {
+                      fileName: gazetteDoc ? gazetteDoc.name : 'gazette_notification.pdf',
+                      label: 'View Uploaded Document',
+                      onView: () => alert('Viewing Gazette Notification Document')
+                    }
                   }
-                  items={[
-                    { label: 'First Name', value: firstName || '-' },
-                    { label: 'Middle Name', value: middleName || '-' },
-                    { label: 'Last Name', value: lastName || '-' },
-                    { label: 'Gender', value: gender || '-' },
-                    { label: 'Date of Birth', value: dobVal || '-' },
-                    { label: 'Father\'s Name', value: fatherName || '-' },
-                    { label: 'Mother\'s Name', value: motherName || '-' },
-                    { label: 'Name Same as 10th', value: isSameAsCurrent === 'true' ? 'Yes' : 'No' },
-                    { label: 'Gazette Proof', value: gazetteDoc ? gazetteDoc.name : 'Not Uploaded' },
-                  ]}
-                />
+                ] : []),
+                {
+                  type: 'subheader',
+                  label: 'Other Identity Details'
+                },
+                {
+                  label: 'Gender',
+                  value: gender || 'MALE'
+                },
+                {
+                  label: 'Date of Birth',
+                  value: formatDateWithWords(dobVal || '15/08/1998')
+                },
+                {
+                  label: 'Father\'s Name',
+                  value: fatherName || 'SURESH SHARMA'
+                },
+                {
+                  label: 'Mother\'s Name',
+                  value: motherName || 'ANITA SHARMA'
+                }
+              ]}
+            />
 
-                {/* Aadhaar Summary Card */}
-                <KeyValueGrid
-                  title="2. Aadhaar & Photo ID Details"
-                  columns={2}
-                  actionSlot={
-                    <Button label="Edit Aadhaar" size="sm" variant="secondary" onClick={() => setActiveStep(2)}>
-                      Edit Section
-                    </Button>
+            {/* Aadhaar Summary Card */}
+            <KeyValueGrid
+              title="2. Aadhaar & Photo ID Details Summary"
+              variant="table"
+              headerVariant="banner"
+              items={[
+                {
+                  label: 'Has Aadhaar Card issued to you?',
+                  value: hasAadhaar === 'true'
+                    ? 'Yes, I have Aadhaar Card and agree to authenticate with eKYC'
+                    : 'No / Use Alternative Photo ID Card'
+                },
+                ...(hasAadhaar === 'true' ? [
+                  {
+                    type: 'subheader' as const,
+                    label: 'Aadhaar eKYC Verified Details'
+                  },
+                  {
+                    label: 'Masked Aadhaar Number',
+                    value: aadhaarMasked || 'XXXX-XXXX-1234'
+                  },
+                  {
+                    label: 'Virtual ID (VID)',
+                    value: vidMasked || 'XXXX-XXXX-XXXX-5678'
+                  },
+                  {
+                    label: 'Candidate Photograph',
+                    docPreview: {
+                      fileName: photoFile instanceof File ? photoFile.name : 'passport_photo.jpg',
+                      label: 'View Uploaded Document',
+                      onView: () => alert('Viewing candidate passport photo')
+                    }
                   }
-                  items={[
-                    { label: 'Has Aadhaar', value: hasAadhaar === 'true' ? 'Yes' : 'No' },
-                    { label: 'Aadhaar Number', value: aadhaarMasked || '-' },
-                    { label: 'Virtual ID (VID)', value: vidMasked || '-' },
-                    { label: 'Candidate Photo', value: photoFile instanceof File ? photoFile.name : 'Not Uploaded' },
-                  ]}
-                />
+                ] : [
+                  {
+                    type: 'subheader' as const,
+                    label: 'Alternative Photo ID Card Details'
+                  },
+                  {
+                    label: 'Photo ID Card',
+                    docPreview: {
+                      fileName: photoIdFileName || 'id_card.jpg',
+                      label: 'View Uploaded Document',
+                      onView: () => alert('Viewing uploaded Photo ID card')
+                    }
+                  }
+                ])
+              ]}
+            />
 
-                {/* Matriculation Summary Card */}
-                <KeyValueGrid
-                  title="3. Class 10th Board Details"
-                  columns={3}
-                  actionSlot={
-                    <Button label="Edit Matriculation" size="sm" variant="secondary" onClick={() => setActiveStep(3)}>
-                      Edit Section
-                    </Button>
+            {/* Matriculation Summary Card */}
+            <KeyValueGrid
+              title="3. Class 10th Board Examination Details Summary"
+              variant="table"
+              headerVariant="banner"
+              items={[
+                {
+                  label: 'Class 10th Roll Number',
+                  value: boardRollNo || '21639018'
+                },
+                {
+                  label: 'Certificate Issue Date',
+                  value: certIssueDate || '25/05/2014'
+                },
+                {
+                  label: 'State / UT of School',
+                  value: selectedState ? (selectedState === 'DL' ? 'Delhi (NCT)' : selectedState) : 'Delhi (NCT)'
+                },
+                {
+                  label: 'Class 10th Education Board',
+                  value: selectedBoard ? (selectedBoard === 'CBSE' ? 'Central Board of Secondary Education (CBSE)' : selectedBoard) : 'Central Board of Secondary Education (CBSE)'
+                },
+                {
+                  label: 'Grading System & Score',
+                  value: `${gradingType.toUpperCase()}: ${marksPercentage || '88.5'}${gradingType === 'marks' ? '%' : ' CGPA'}`
+                },
+                {
+                  label: '10th Class Board Certificate',
+                  docPreview: {
+                    fileName: boardFileName || 'board_certificate.pdf',
+                    label: 'View 10th Board Certificate',
+                    onView: () => alert('Viewing 10th Board Certificate')
                   }
-                  items={[
-                    { label: 'Roll Number', value: boardRollNo || '-' },
-                    { label: 'Issue Date', value: certIssueDate || '-' },
-                    { label: 'State of School', value: selectedState || '-' },
-                    { label: 'Education Board', value: selectedBoard || '-' },
-                    { label: 'Score System', value: `${gradingType.toUpperCase()}: ${marksPercentage || '-'}` },
-                    { label: 'Board Certificate', value: boardDoc ? boardDoc.name : 'Not Uploaded' },
-                  ]}
-                />
-              </VStack>
-            </Card>
+                }
+              ]}
+            />
           </div>
         )}
       </div>
