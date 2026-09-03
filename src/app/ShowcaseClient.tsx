@@ -102,6 +102,426 @@ const InfoTrigger = ({ pdfUrl, isCompleted }: { pdfUrl: string; isCompleted?: bo
   />
 );
 
+function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegistration: () => void }) {
+  const [otrStep, setOtrStep] = useState<number>(1);
+  
+  // Email states
+  const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
+  const [isEmailOtpSent, setIsEmailOtpSent] = useState(false);
+  const [emailOtp, setEmailOtp] = useState('');
+  const [emailTimer, setEmailTimer] = useState(60);
+
+  // Mobile states
+  const [mobile, setMobile] = useState('');
+  const [confirmMobile, setConfirmMobile] = useState('');
+  const [isMobileOtpSent, setIsMobileOtpSent] = useState(false);
+  const [mobileOtp, setMobileOtp] = useState('');
+  const [mobileTimer, setMobileTimer] = useState(60);
+
+  // Password states
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [otrId, setOtrId] = useState('');
+
+  const steps = [
+    { number: 1, label: 'Instructions' },
+    { number: 2, label: 'Verify Email ID' },
+    { number: 3, label: 'Verify Mobile Number' },
+    { number: 4, label: 'Create Password' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Registration Stepper Bar */}
+      <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-4 md:p-6 shadow-sm">
+        <div className="relative">
+          {/* Base grey line */}
+          <div className="absolute left-[12%] right-[12%] top-[14px] h-[2px] bg-slate-300" />
+          {/* Progress blue line */}
+          <div
+            className="absolute top-[14px] h-[2px] bg-[#0b4fb3] transition-all duration-300"
+            style={{
+              left: '12%',
+              right: otrStep <= 1 ? '88%' : otrStep === 2 ? '62.7%' : otrStep === 3 ? '37.3%' : '12%',
+            }}
+          />
+
+          <div className="relative flex items-start justify-between">
+            {steps.map((step) => {
+              const isCurrent = otrStep === step.number;
+              const isCompleted = otrStep > step.number;
+
+              return (
+                <div key={step.number} className="flex flex-1 flex-col items-center">
+                  <div
+                    className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                      isCurrent
+                        ? 'bg-[#0b4fb3] text-white'
+                        : isCompleted
+                          ? 'bg-[#4CAF50] text-white'
+                          : 'bg-white border-[4px] border-[#0b4fb3] text-slate-700'
+                    }`}
+                  >
+                    {isCompleted ? '✓' : step.number}
+                  </div>
+                  <span className={`mt-2 text-center text-xs font-semibold md:text-sm ${isCurrent || isCompleted ? 'text-[#0b4fb3]' : 'text-slate-500'}`}>
+                    {step.number}. {step.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
+
+      {/* STEP 1: INSTRUCTIONS */}
+      {otrStep === 1 && (
+        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
+          <div className="border-b pb-3 flex items-center justify-between">
+            <Heading level={3} className="text-lg font-bold text-[#195992]">
+              Step 1 : Candidate Pre-Account Creation Guidelines
+            </Heading>
+            <Badge label="OTR Setup" />
+          </div>
+
+          <div className="space-y-4 text-sm text-slate-700 leading-relaxed">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+              <Text className="font-semibold text-base mb-1">Important Notice for First-Time Applicants:</Text>
+              <Text>
+                One-Time Registration (OTR) is mandatory for applying to all Universal Registration Scheme examinations. Ensure that you enter a valid and active <b>Email ID</b> and <b>Mobile Number</b>.
+              </Text>
+            </div>
+
+            <ul className="list-disc pl-5 space-y-2 text-slate-700">
+              <li><b>Email ID Verification:</b> A 6-digit OTP will be sent to your registered Email address.</li>
+              <li><b>Mobile Number Verification:</b> A 6-digit OTP will be sent via SMS to your 10-digit mobile number.</li>
+              <li><b>Password Guidelines:</b> Passwords must be 8 to 16 characters in length containing uppercase, lowercase, numbers, and special characters.</li>
+              <li><b>Single Account Policy:</b> A candidate can create only ONE OTR profile linked to their Aadhaar / Photo ID and Class 10th details.</li>
+            </ul>
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-slate-200">
+            <Button
+              label="Proceed to Verify Email ID"
+              variant="primary"
+              onClick={() => setOtrStep(2)}
+            >
+              Proceed to Step 2: Verify Email ID →
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {/* STEP 2: VERIFY EMAIL ID */}
+      {otrStep === 2 && (
+        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
+          <div className="border-b pb-3">
+            <Heading level={3} className="text-lg font-bold text-[#195992]">
+              Step 2 : Verify Email ID
+            </Heading>
+            <Text className="text-xs text-slate-500 mt-0.5">
+              Enter your active email address to receive and verify the 6-digit Email OTP code.
+            </Text>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <TextInput
+              label="Email ID *"
+              placeholder="candidate@example.com"
+              type="email"
+              value={email}
+              isDisabled={isEmailOtpSent}
+              onChange={(val) => setEmail(val)}
+            />
+            <TextInput
+              label="Confirm Email ID *"
+              placeholder="Re-enter Email ID"
+              type="email"
+              value={confirmEmail}
+              isDisabled={isEmailOtpSent}
+              onChange={(val) => setConfirmEmail(val)}
+            />
+          </div>
+
+          {!isEmailOtpSent ? (
+            <div className="space-y-4 pt-2">
+              <CanvasCaptcha
+                label="Security Captcha Verification *"
+                codeLength={5}
+                onVerify={(isValid) => {}}
+              />
+              <div className="flex justify-end">
+                <Button
+                  label="Send Email OTP"
+                  variant="primary"
+                  isDisabled={!email || email !== confirmEmail}
+                  onClick={() => setIsEmailOtpSent(true)}
+                >
+                  Get Email OTP Code
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-4">
+              <Text className="text-sm font-semibold text-emerald-900">
+                ✓ 6-Digit Verification OTP sent to <b>{email}</b>
+              </Text>
+              <OtpInput
+                length={6}
+                value={emailOtp}
+                onChange={(val) => setEmailOtp(val)}
+                label="Enter 6-Digit Email OTP *"
+              />
+              <div className="flex items-center justify-between text-xs text-slate-600">
+                <span>Resend OTP available in: <b>{emailTimer}s</b></span>
+                <Button
+                  label="Resend OTP"
+                  variant="ghost"
+                  size="sm"
+                  isDisabled={emailTimer > 0}
+                  onClick={() => setEmailTimer(60)}
+                >
+                  Resend Email OTP
+                </Button>
+              </div>
+
+              <div className="flex justify-end pt-2 border-t border-emerald-200">
+                <Button
+                  label="Verify & Continue to Mobile Verification"
+                  variant="primary"
+                  isDisabled={emailOtp.length < 6}
+                  onClick={() => setOtrStep(3)}
+                >
+                  Verify Email & Proceed to Mobile Verification →
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {/* STEP 3: VERIFY MOBILE NUMBER */}
+      {otrStep === 3 && (
+        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
+          <div className="border-b pb-3">
+            <Heading level={3} className="text-lg font-bold text-[#195992]">
+              Step 3 : Verify Mobile Number
+            </Heading>
+            <Text className="text-xs text-slate-500 mt-0.5">
+              Enter your 10-digit mobile number to receive and verify the SMS OTP code.
+            </Text>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <TextInput
+              label="Mobile Number *"
+              placeholder="Enter 10-digit mobile number"
+              type="text"
+              value={mobile}
+              isDisabled={isMobileOtpSent}
+              onChange={(val) => setMobile(val)}
+            />
+            <TextInput
+              label="Confirm Mobile Number *"
+              placeholder="Re-enter 10-digit mobile number"
+              type="text"
+              value={confirmMobile}
+              isDisabled={isMobileOtpSent}
+              onChange={(val) => setConfirmMobile(val)}
+            />
+          </div>
+
+          {!isMobileOtpSent ? (
+            <div className="space-y-4 pt-2">
+              <CanvasCaptcha
+                label="Security Captcha Verification *"
+                codeLength={5}
+                onVerify={(isValid) => {}}
+              />
+              <div className="flex justify-end">
+                <Button
+                  label="Send Mobile OTP"
+                  variant="primary"
+                  isDisabled={!mobile || mobile !== confirmMobile || mobile.length < 10}
+                  onClick={() => setIsMobileOtpSent(true)}
+                >
+                  Get SMS OTP Code
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-4">
+              <Text className="text-sm font-semibold text-emerald-900">
+                ✓ 6-Digit Verification SMS OTP sent to <b>+91 {mobile}</b>
+              </Text>
+              <OtpInput
+                length={6}
+                value={mobileOtp}
+                onChange={(val) => setMobileOtp(val)}
+                label="Enter 6-Digit Mobile SMS OTP *"
+              />
+              <div className="flex items-center justify-between text-xs text-slate-600">
+                <span>Resend OTP available in: <b>{mobileTimer}s</b></span>
+                <Button
+                  label="Resend OTP"
+                  variant="ghost"
+                  size="sm"
+                  isDisabled={mobileTimer > 0}
+                  onClick={() => setMobileTimer(60)}
+                >
+                  Resend SMS OTP
+                </Button>
+              </div>
+
+              <div className="flex justify-end pt-2 border-t border-emerald-200">
+                <Button
+                  label="Verify & Continue to Create Password"
+                  variant="primary"
+                  isDisabled={mobileOtp.length < 6}
+                  onClick={() => setOtrStep(4)}
+                >
+                  Verify Mobile & Proceed to Create Password →
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {/* STEP 4: CREATE PASSWORD */}
+      {otrStep === 4 && (
+        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
+          <div className="border-b pb-3">
+            <Heading level={3} className="text-lg font-bold text-[#195992]">
+              Step 4 : Create Account Password
+            </Heading>
+            <Text className="text-xs text-slate-500 mt-0.5">
+              Set up a secure login password for your One-Time Registration (OTR) candidate account.
+            </Text>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <TextInput
+              label="Create Password *"
+              placeholder="Enter strong password"
+              type="password"
+              value={password}
+              onChange={(val) => setPassword(val)}
+            />
+            <TextInput
+              label="Confirm Password *"
+              placeholder="Re-enter password"
+              type="password"
+              value={confirmPassword}
+              onChange={(val) => setConfirmPassword(val)}
+            />
+          </div>
+
+          {/* Password Requirements Checklist */}
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-700">
+            <Text className="font-semibold text-slate-900 text-sm">Password Security Guidelines:</Text>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+              <span className={password.length >= 8 && password.length <= 16 ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                • 8 to 16 characters long
+              </span>
+              <span className={/[A-Z]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                • At least 1 uppercase letter (A-Z)
+              </span>
+              <span className={/[a-z]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                • At least 1 lowercase letter (a-z)
+              </span>
+              <span className={/[0-9]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                • At least 1 numeric digit (0-9)
+              </span>
+              <span className={/[!@#$%^&*()]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                • At least 1 special character (@, #, $, %)
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2 pt-2">
+            <input
+              type="checkbox"
+              id="otrTerms"
+              checked={isTermsAccepted}
+              onChange={(e) => setIsTermsAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-[#195992] focus:ring-[#195992]"
+            />
+            <label htmlFor="otrTerms" className="text-xs text-slate-700 leading-normal cursor-pointer">
+              I declare that the Email ID (<b>{email || 'candidate@example.com'}</b>) and Mobile Number (<b>+91 {mobile || '9876543210'}</b>) provided above belong exclusively to me and I am creating my official candidate OTR account.
+            </label>
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-slate-200">
+            <Button
+              label="Complete Registration & Generate OTR ID"
+              variant="primary"
+              isDisabled={!password || password !== confirmPassword || !isTermsAccepted}
+              onClick={() => {
+                setOtrId(`OTR2026${Math.floor(100000 + Math.random() * 900000)}`);
+                setOtrStep(5);
+              }}
+            >
+              Complete Registration & Generate OTR ID →
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {/* STEP 5: REGISTRATION COMPLETE & OTR GENERATED */}
+      {otrStep === 5 && (
+        <Card className="bg-white border border-emerald-300 rounded-2xl p-8 shadow-sm text-center space-y-6">
+          <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+            ✓
+          </div>
+          <div>
+            <Heading level={2} className="text-2xl font-bold text-slate-900">
+              One-Time Registration (OTR) Account Created!
+            </Heading>
+            <Text className="text-sm text-slate-600 mt-1">
+              Your candidate OTR profile has been successfully verified and generated.
+            </Text>
+          </div>
+
+          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl inline-block px-8">
+            <Text className="text-xs uppercase tracking-wider text-emerald-800 font-bold">Your Generated OTR Reference ID</Text>
+            <Text className="text-3xl font-extrabold text-[#195992] tracking-widest mt-1">
+              {otrId || 'OTR2026987452'}
+            </Text>
+          </div>
+
+          <div className="max-w-md mx-auto text-left p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-2 text-slate-700">
+            <div className="flex justify-between">
+              <span>Verified Email ID:</span>
+              <span className="font-semibold text-slate-900">{email || 'candidate@example.com'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Verified Mobile Number:</span>
+              <span className="font-semibold text-slate-900">+91 {mobile || '9876543210'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Account Status:</span>
+              <span className="font-semibold text-emerald-700">ACTIVE & VERIFIED</span>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-200 flex justify-center">
+            <Button
+              label="Proceed to Universal Registration Application Form"
+              variant="primary"
+              onClick={onProceedToRegistration}
+            >
+              Proceed to Universal Registration Wizard (5 Steps) →
+            </Button>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 export default function ShowcaseClient() {
   const [activeStep, setActiveStep] = useState(0);
 
@@ -163,6 +583,7 @@ export default function ShowcaseClient() {
   const [gradingType, setGradingType] = useState<'marks' | 'cgpa'>('marks');
   const [marksPercentage, setMarksPercentage] = useState('');
   const [boardDoc, setBoardDoc] = useState<File | null>(null);
+  const [appMode, setAppMode] = useState<'otr' | 'registration'>('otr');
 
   const steps = [
     { label: '1. Auth & OTP' },
@@ -176,58 +597,82 @@ export default function ShowcaseClient() {
     <div className="min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         
-        {/* Top Header Card */}
+        {/* Top Header Card & Workflow Switcher */}
         <Card className="bg-white border border-slate-300 rounded-xl p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <Heading level={2} className="text-xl font-bold text-slate-900">
-                  Universal Registration Scheme (URN) Form Controls Showcase
-                </Heading>
-                <Badge label="@astryxdesign/core v0.5.2" />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3">
+                  <Heading level={2} className="text-xl font-bold text-slate-900">
+                    Universal Registration Scheme (URN) Form Controls Showcase
+                  </Heading>
+                  <Badge label="@astryxdesign/core v0.5.2" />
+                </div>
+                <Text className="mt-1 text-slate-600 text-sm">
+                  Isolated interactive environment testing all generic Astryx components with exact UPSC / Keycloak UI styling.
+                </Text>
               </div>
-              <Text className="mt-1 text-slate-600 text-sm">
-                Isolated interactive environment testing all generic Astryx components with exact UPSC / Keycloak UI styling.
-              </Text>
+              {appMode === 'registration' && (
+                <HStack gap={2}>
+                  <Button
+                    label="Previous Step"
+                    variant="secondary"
+                    isDisabled={activeStep === 0}
+                    onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    label="Next Step"
+                    variant="primary"
+                    isDisabled={activeStep === steps.length - 1}
+                    onClick={() => setActiveStep((prev) => Math.min(steps.length - 1, prev + 1))}
+                  >
+                    Next
+                  </Button>
+                </HStack>
+              )}
             </div>
-            <HStack gap={2}>
+
+            {/* Workflow Mode Switcher Tabs */}
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
               <Button
-                label="Previous Step"
-                variant="secondary"
-                isDisabled={activeStep === 0}
-                onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
+                label="1. First-Time Candidate OTR Account Creation"
+                variant={appMode === 'otr' ? 'primary' : 'secondary'}
+                onClick={() => setAppMode('otr')}
               >
-                Back
+                1. First-Time Candidate Account Creation (OTR Stepper)
               </Button>
               <Button
-                label="Next Step"
-                variant="primary"
-                isDisabled={activeStep === steps.length - 1}
-                onClick={() => setActiveStep((prev) => Math.min(steps.length - 1, prev + 1))}
+                label="2. Universal Registration Application Wizard"
+                variant={appMode === 'registration' ? 'primary' : 'secondary'}
+                onClick={() => setAppMode('registration')}
               >
-                Next
+                2. Universal Registration Wizard (5 Steps)
               </Button>
-            </HStack>
+            </div>
           </div>
         </Card>
 
-        {/* Main 2-Column Layout: Extended Astryx SideNav + Step Forms */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start w-full">
-          
-          {/* Left Sidebar: Native Astryx SideNav in Card Variant */}
-          <div className="shrink-0">
-            <SideNav variant="card" collapsible={{ defaultIsCollapsed: false }}>
-              <SideNavSection title="Universal Registration" headerVariant="banner">
-                <SideNavItem
-                  label="Identity Profile"
-                  variant="stepCard"
-                  isSelected={activeStep === 0 || activeStep === 1}
-                  isCompleted={activeStep > 1}
-                  icon={<UserStepIcon isCompleted={activeStep > 1} isActive={activeStep === 0 || activeStep === 1} />}
-                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" isCompleted={activeStep > 1} />}
-                  statusIcon={activeStep > 1 ? <CheckIcon /> : undefined}
-                  onClick={() => setActiveStep(1)}
-                />
+        {appMode === 'otr' ? (
+          <OtrAccountCreationView onProceedToRegistration={() => setAppMode('registration')} />
+        ) : (
+          /* Main 2-Column Layout: Extended Astryx SideNav + Step Forms */
+          <div className="flex flex-col lg:flex-row gap-6 items-start w-full">
+            {/* Left Sidebar: Native Astryx SideNav in Card Variant */}
+            <div className="shrink-0">
+              <SideNav variant="card" collapsible={{ defaultIsCollapsed: false }}>
+                <SideNavSection title="Universal Registration" headerVariant="banner">
+                  <SideNavItem
+                    label="Identity Profile"
+                    variant="stepCard"
+                    isSelected={activeStep === 0 || activeStep === 1}
+                    isCompleted={activeStep > 1}
+                    icon={<UserStepIcon isCompleted={activeStep > 1} isActive={activeStep === 0 || activeStep === 1} />}
+                    infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" isCompleted={activeStep > 1} />}
+                    statusIcon={activeStep > 1 ? <CheckIcon /> : undefined}
+                    onClick={() => setActiveStep(1)}
+                  />
                 <SideNavItem
                   label="Aadhaar / Photo ID"
                   variant="stepCard"
@@ -1156,8 +1601,9 @@ export default function ShowcaseClient() {
             />
           </div>
         )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
