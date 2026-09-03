@@ -22,6 +22,7 @@ import {
   use,
   useOptimistic,
   useRef,
+  useState,
   useTransition,
   type ChangeEvent,
   type FocusEvent,
@@ -252,6 +253,33 @@ export interface CheckboxInputProps extends Omit<BaseProps, 'onChange'> {
    * When set with a message, displays a colored message box below the checkbox.
    */
   status?: InputStatus;
+  /**
+   * Component variant.
+   * - 'standard': Default field layout
+   * - 'boxed' | 'card': Boxed container layout with background, border, and hover states
+   * @default 'standard'
+   */
+  variant?: 'standard' | 'boxed' | 'card';
+  /** Custom background color for boxed/card variant */
+  boxedBgColor?: string;
+  /** Custom border color for boxed/card variant */
+  boxedBorderColor?: string;
+  /** Custom hover background color for boxed/card variant */
+  boxedHoverBgColor?: string;
+  /** Custom hover border color for boxed/card variant */
+  boxedHoverBorderColor?: string;
+  /** Custom padding for boxed/card variant */
+  boxedPadding?: string;
+  /** Custom border radius for boxed/card variant */
+  boxedRadius?: string;
+  /** Custom text color for label */
+  labelColor?: string;
+  /** Custom font weight for label */
+  labelFontWeight?: React.CSSProperties['fontWeight'];
+  /** Custom font size for label */
+  labelFontSize?: React.CSSProperties['fontSize'];
+  /** Indicator style for required fields ('asterisk' or 'text') */
+  requiredIndicator?: 'asterisk' | 'text';
 }
 
 // Dynamic field width (number -> px, string used as-is).
@@ -291,6 +319,17 @@ export function CheckboxInput({
   isReadOnly = false,
   isOptional = false,
   isRequired = false,
+  requiredIndicator = 'asterisk',
+  variant = 'standard',
+  boxedBgColor,
+  boxedBorderColor,
+  boxedHoverBgColor,
+  boxedHoverBorderColor,
+  boxedPadding,
+  boxedRadius,
+  labelColor,
+  labelFontWeight,
+  labelFontSize,
   size = 'md',
   onFocus,
   onBlur,
@@ -380,13 +419,41 @@ export function CheckboxInput({
   const ariaDescribedBy =
     describedByParts.length > 0 ? describedByParts.join(' ') : undefined;
 
+  const isBoxed = variant === 'boxed' || variant === 'card';
+  const [isHovered, setIsHovered] = useState(false);
+
+  const containerStyle: React.CSSProperties = {
+    ...(isBoxed
+      ? {
+          backgroundColor:
+            isHovered && boxedHoverBgColor
+              ? boxedHoverBgColor
+              : (boxedBgColor ?? '#fff8e5'),
+          border: `1px solid ${
+            isHovered && boxedHoverBorderColor
+              ? boxedHoverBorderColor
+              : (boxedBorderColor ?? '#f0c36d')
+          }`,
+          borderRadius: boxedRadius ?? '12px',
+          padding: boxedPadding ?? '12px 16px',
+          transition: 'background-color 0.2s ease, border-color 0.2s ease',
+          boxSizing: 'border-box',
+          width: '100%',
+        }
+      : {}),
+    ...(width ? {width: typeof width === 'number' ? `${width}px` : width} : {}),
+    ...style,
+  };
+
   return (
     <div
+      onMouseEnter={isBoxed ? () => setIsHovered(true) : undefined}
+      onMouseLeave={isBoxed ? () => setIsHovered(false) : undefined}
+      className={className}
+      style={containerStyle}
       {...mergeProps(
         themeProps('checkbox-input', {size}),
         stylex.props(width != null && dynamicWidthStyles.width(width), xstyle),
-        className,
-        style,
       )}>
       <div
         ref={el => {
@@ -489,6 +556,10 @@ export function CheckboxInput({
             isDisabled={isDisabled}
             isOptional={isOptional}
             isRequired={isRequired}
+            requiredIndicator={requiredIndicator}
+            labelColor={labelColor}
+            labelFontWeight={labelFontWeight}
+            labelFontSize={labelFontSize}
             labelIcon={labelIcon}
             description={description}
             descriptionID={descriptionID}
