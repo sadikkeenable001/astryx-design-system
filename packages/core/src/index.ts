@@ -66,6 +66,7 @@ export * from './DateRangeInput';
 export * from './Field';
 export * from './FileInput';
 export * from './DocumentUploader';
+export * from './CardFileUploader';
 export * from './FormLayout';
 export * from './Grid';
 export * from './Section';
