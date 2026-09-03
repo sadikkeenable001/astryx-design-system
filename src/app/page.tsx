@@ -8,6 +8,9 @@
 
 import { useState } from 'react';
 import {
+  SideNav,
+  SideNavSection,
+  SideNavItem,
   TextInput,
   MaskedInput,
   OtpInput,
@@ -29,6 +32,61 @@ import {
   Heading,
   Divider,
 } from '@astryxdesign/core';
+
+// Helper Icons for Wizard Sidebar
+const CheckIcon = () => (
+  <svg className="w-4 h-4 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+);
+
+const UserStepIcon = () => (
+  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+  </svg>
+);
+
+const IdCardStepIcon = () => (
+  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h2a2 2 0 012 2v1m-6 0h6" />
+  </svg>
+);
+
+const GraduationStepIcon = () => (
+  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.083 0 01.665-6.479L12 14z" />
+  </svg>
+);
+
+const EyeStepIcon = () => (
+  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  </svg>
+);
+
+const InfoTrigger = ({ pdfUrl }: { pdfUrl: string }) => (
+  <button
+    type="button"
+    onClick={(e) => {
+      e.stopPropagation();
+      window.open(pdfUrl, '_blank');
+    }}
+    className="p-1 rounded text-slate-500 hover:text-blue-700 transition-colors"
+    title="View Instruction PDF"
+  >
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </button>
+);
 
 export default function ShowcasePage() {
   const [activeStep, setActiveStep] = useState(0);
@@ -102,7 +160,7 @@ export default function ShowcasePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Header Card */}
         <Card className="bg-white border border-slate-300 rounded-xl p-6 shadow-sm">
@@ -139,24 +197,62 @@ export default function ShowcasePage() {
           </div>
         </Card>
 
-        {/* Step Stepper Navigation Bar */}
-        <Card className="bg-white border border-slate-300 rounded-xl p-2 shadow-sm">
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-            {steps.map((step, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveStep(idx)}
-                className={`py-2.5 px-3 rounded-lg text-sm font-semibold transition-all text-center ${
-                  activeStep === idx
-                    ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-600/30'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                }`}
-              >
-                {step.label}
-              </button>
-            ))}
+        {/* Main 2-Column Layout: Extended Astryx SideNav + Step Forms */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* Left Sidebar: Native Astryx SideNav in Card Variant */}
+          <div className="lg:col-span-4 xl:col-span-3">
+            <SideNav variant="card" collapsible={{ defaultIsCollapsed: false }}>
+              <SideNavSection title="Universal Registration" headerVariant="banner">
+                <SideNavItem
+                  label="Identity Profile"
+                  variant="stepCard"
+                  isSelected={activeStep === 0 || activeStep === 1}
+                  isCompleted={activeStep > 1}
+                  icon={<UserStepIcon />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  statusIcon={activeStep > 1 ? <CheckIcon /> : undefined}
+                  onClick={() => setActiveStep(1)}
+                />
+                <SideNavItem
+                  label="Aadhaar / Photo ID"
+                  variant="stepCard"
+                  isSelected={activeStep === 2}
+                  isCompleted={activeStep > 2}
+                  isLocked={activeStep < 2}
+                  icon={<IdCardStepIcon />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  statusIcon={activeStep > 2 ? <CheckIcon /> : activeStep < 2 ? <LockIcon /> : undefined}
+                  onClick={() => activeStep >= 1 && setActiveStep(2)}
+                />
+                <SideNavItem
+                  label="Matriculation Board Profile"
+                  variant="stepCard"
+                  isSelected={activeStep === 3}
+                  isCompleted={activeStep > 3}
+                  isLocked={activeStep < 3}
+                  icon={<GraduationStepIcon />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  statusIcon={activeStep > 3 ? <CheckIcon /> : activeStep < 3 ? <LockIcon /> : undefined}
+                  onClick={() => activeStep >= 2 && setActiveStep(3)}
+                />
+                <SideNavItem
+                  label="Preview Universal Registration"
+                  variant="stepCard"
+                  isSelected={activeStep === 4}
+                  isCompleted={activeStep === 4}
+                  isLocked={activeStep < 4}
+                  icon={<EyeStepIcon />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  statusIcon={activeStep < 4 ? <LockIcon /> : <CheckIcon />}
+                  onClick={() => activeStep >= 3 && setActiveStep(4)}
+                />
+              </SideNavSection>
+            </SideNav>
           </div>
-        </Card>
+
+          {/* Right Main Content Area */}
+          <div className="lg:col-span-8 xl:col-span-9">
 
         {/* =============================================================================
             STEP 1: AUTH & SECURITY OTP CONTROLS
@@ -1046,6 +1142,8 @@ export default function ShowcasePage() {
             />
           </div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );
