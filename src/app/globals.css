@@ -207,16 +207,151 @@ div[class*="image-uploader"]:hover {
   border-color: #2563eb !important;
 }
 
-/* 6. Buttons - UPSC / Keycloak Sharp Style */
-button {
+/* 6. Buttons - UPSC / Keycloak Sharp Style & Astryx Component Variants */
+.astryx-button,
+button.astryx-button,
+a.astryx-button,
+button[data-variant],
+[data-astryx-button] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   font-family: inherit !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   font-size: 14px !important;
-  transition: all 0.15s ease !important;
+  line-height: 1.4 !important;
+  border-radius: 6px !important;
+  padding: 8px 18px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease-in-out !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  outline: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 }
 
-button:not(.rounded-full):not([style*="border-radius"]):not([style*="borderRadius"]) {
-  border-radius: 6px;
+/* Button Size Variants */
+.astryx-button.sm, [data-size="sm"] {
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+  height: 32px !important;
+}
+
+.astryx-button.md, [data-size="md"] {
+  padding: 8px 18px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+}
+
+.astryx-button.lg, [data-size="lg"] {
+  padding: 10px 24px !important;
+  font-size: 16px !important;
+  height: 44px !important;
+}
+
+/* Primary Variant - Rich Navy Blue */
+.astryx-button.primary,
+[data-variant="primary"],
+button[data-variant="primary"] {
+  background-color: #195992 !important;
+  color: #ffffff !important;
+  border: 1px solid #195992 !important;
+}
+
+.astryx-button.primary:hover:not(:disabled):not([aria-disabled="true"]),
+[data-variant="primary"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: #124373 !important;
+  border-color: #124373 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Secondary Variant - Crisp Slate Surface */
+.astryx-button.secondary,
+[data-variant="secondary"],
+button[data-variant="secondary"] {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.astryx-button.secondary:hover:not(:disabled):not([aria-disabled="true"]),
+[data-variant="secondary"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Ghost / Transparent Variant */
+.astryx-button.ghost,
+[data-variant="ghost"],
+button[data-variant="ghost"] {
+  background-color: transparent !important;
+  color: #195992 !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+.astryx-button.ghost:hover:not(:disabled):not([aria-disabled="true"]),
+[data-variant="ghost"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: #eff6ff !important;
+  color: #124373 !important;
+}
+
+/* Destructive Variant */
+.astryx-button.destructive,
+[data-variant="destructive"],
+button[data-variant="destructive"] {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1px solid #dc2626 !important;
+}
+
+.astryx-button.destructive:hover:not(:disabled):not([aria-disabled="true"]),
+[data-variant="destructive"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+
+/* Outline Variant */
+.astryx-button.outline,
+[data-variant="outline"],
+button[data-variant="outline"] {
+  background-color: #ffffff !important;
+  color: #195992 !important;
+  border: 1px solid #195992 !important;
+}
+
+.astryx-button.outline:hover:not(:disabled):not([aria-disabled="true"]),
+[data-variant="outline"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: #f0f7ff !important;
+  border-color: #124373 !important;
+}
+
+/* Table Variant */
+.astryx-button.table,
+[data-variant="table"],
+button[data-variant="table"] {
+  background-color: #195992 !important;
+  color: #ffffff !important;
+  border: 1px solid #195992 !important;
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  height: 28px !important;
+  border-radius: 4px !important;
+}
+
+/* Disabled State for ALL Astryx Buttons */
+.astryx-button:disabled,
+.astryx-button[aria-disabled="true"],
+button:disabled,
+button[aria-disabled="true"],
+button[data-variant]:disabled,
+button[data-variant][aria-disabled="true"] {
+  background-color: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  border-color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+  opacity: 0.65 !important;
+  box-shadow: none !important;
 }
 
 /* 7. OTP Digits Input Boxes */
