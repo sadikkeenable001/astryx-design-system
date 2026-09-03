@@ -155,13 +155,14 @@ const styles = stylex.create({
     borderRadius: '16px',
     padding: spacingVars['--spacing-3'],
     boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+    width: 320,
   },
 
   headerToggleContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: spacingVars['--spacing-2'],
+    marginBottom: spacingVars['--spacing-3'],
   },
   headerToggleContainerCollapsed: {
     justifyContent: 'center',
@@ -190,7 +191,7 @@ const styles = stylex.create({
     },
   },
   rootCollapsed: {
-    width: spacingVars['--spacing-12'],
+    width: 76,
   },
   stickyTop: {
     display: 'flex',
@@ -214,6 +215,11 @@ const styles = stylex.create({
     overflowY: 'auto',
     overflowX: 'hidden',
     paddingInline: spacingVars['--spacing-2'],
+  },
+  cardScrollable: {
+    paddingInline: 0,
+    paddingBlockStart: 0,
+    paddingBlockEnd: 0,
   },
   scrollableCollapsed: {
     display: 'flex',
@@ -666,7 +672,7 @@ export function SideNav({
           <button
             type="button"
             aria-label="Toggle sidebar"
-            onClick={() => onCollapsedChange?.(!collapsed)}
+            onClick={toggle}
             {...stylex.props(styles.headerToggleButton)}>
             <Icon icon="menu" size="sm" />
           </button>
@@ -687,6 +693,7 @@ export function SideNav({
       <div
         {...stylex.props(
           styles.scrollable,
+          variant === 'card' && styles.cardScrollable,
           collapsed && styles.scrollableCollapsed,
           hasStickyTop ? styles.scrollableWithTop : styles.scrollableNoTop,
           hasStickyBottom
@@ -695,7 +702,7 @@ export function SideNav({
         )}>
         {children}
       </div>
-      {(hasStickyBottom || showCollapseButton) && (
+      {(hasStickyBottom || (showCollapseButton && variant !== 'card')) && (
         <div
           {...stylex.props(
             styles.stickyBottom,
@@ -708,7 +715,9 @@ export function SideNav({
               collapsed && styles.footerRowCollapsed,
             )}>
             <SizeProvider value={FOOTER_ICON_SIZE}>
-              {showCollapseButton && <SideNavCollapseButton />}
+              {showCollapseButton && variant !== 'card' && (
+                <SideNavCollapseButton />
+              )}
               {footerIcons}
             </SizeProvider>
           </div>
