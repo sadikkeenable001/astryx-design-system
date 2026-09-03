@@ -169,6 +169,17 @@ export interface FieldLabelProps extends BaseProps<HTMLLabelElement> {
    * Custom font size for the label text (e.g. '12px', '0.75rem', '14px').
    */
   labelFontSize?: React.CSSProperties['fontSize'];
+  /**
+   * Custom text color for the label.
+   */
+  labelColor?: string;
+  /**
+   * Indicator style for required fields.
+   * - 'asterisk': Renders a red asterisk (*)
+   * - 'text': Renders localized 'Required' text
+   * @default 'asterisk'
+   */
+  requiredIndicator?: 'asterisk' | 'text';
 }
 
 /**
@@ -193,6 +204,8 @@ export function FieldLabel({
   isDisabled = false,
   isOptional = false,
   isRequired = false,
+  requiredIndicator = 'asterisk',
+  labelColor,
   labelIcon,
   labelTooltip,
   description,
@@ -223,7 +236,9 @@ export function FieldLabel({
   const statusText = showOptional
     ? t('@astryx.field.optional')
     : showRequired
-      ? t('@astryx.field.required')
+      ? requiredIndicator === 'asterisk'
+        ? '*'
+        : t('@astryx.field.required')
       : null;
 
   // A group label (e.g. for a radiogroup) must not be a literal `<label>`
@@ -273,8 +288,17 @@ export function FieldLabel({
       {label}
       {statusText && (
         <span {...stylex.props(styles.optionalRequired)}>
-          <span aria-hidden="true"> ∙ </span>
-          {statusText}
+          {statusText === '*' ? (
+            <span
+              style={{color: '#dc2626', fontWeight: 'bold', marginLeft: '3px'}}>
+              *
+            </span>
+          ) : (
+            <>
+              <span aria-hidden="true"> ∙ </span>
+              {statusText}
+            </>
+          )}
         </span>
       )}
       {labelTooltip && (
@@ -288,6 +312,7 @@ export function FieldLabel({
   const labelStyle: React.CSSProperties = {
     ...(labelFontWeight != null ? {fontWeight: labelFontWeight} : {}),
     ...(labelFontSize != null ? {fontSize: labelFontSize} : {}),
+    ...(labelColor != null ? {color: labelColor} : {}),
     ...style,
   };
 
