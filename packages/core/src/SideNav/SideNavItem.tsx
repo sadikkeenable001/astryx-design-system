@@ -230,6 +230,8 @@ const styles = stylex.create({
   },
 
   stepCard: {
+    height: 'auto',
+    minHeight: '44px',
     borderRadius: '8px',
     paddingInline: spacingVars['--spacing-3'],
     paddingBlock: spacingVars['--spacing-2'],

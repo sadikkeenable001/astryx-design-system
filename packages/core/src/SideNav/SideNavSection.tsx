@@ -35,12 +35,11 @@ import {themeProps} from '../utils/themeProps';
 // Styles
 // =============================================================================
 
- 
 const styles = stylex.create({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    paddingBlock: spacingVars['--spacing-1'],
+    paddingBlock: 0,
   },
   header: {
     display: 'flex',
@@ -122,8 +121,12 @@ const styles = stylex.create({
 
 function getCollapsedTitle(title: string): string {
   const t = String(title || '').trim();
-  if (!t) {return 'UR';}
-  if (t.toLowerCase() === 'universal registration') {return 'UR';}
+  if (!t) {
+    return 'UR';
+  }
+  if (t.toLowerCase() === 'universal registration') {
+    return 'UR';
+  }
   const parts = t.split(/\s+/).filter(Boolean);
   if (parts.length >= 2) {
     return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
