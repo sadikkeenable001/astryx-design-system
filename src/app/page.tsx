@@ -34,56 +34,68 @@ import {
 } from '@astryxdesign/core';
 
 // Helper Icons for Wizard Sidebar
+// Exact 1:1 Icons from urn-keycloak production
 const CheckIcon = () => (
-  <svg className="w-4 h-4 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+  <svg className="w-4 h-4 text-green-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
   </svg>
 );
 
 const LockIcon = () => (
-  <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+  <svg className="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
   </svg>
 );
 
-const UserStepIcon = () => (
-  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+const UserStepIcon = ({ isCompleted, isActive }: { isCompleted?: boolean; isActive?: boolean }) => (
+  <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.2158 12.8806C12.1453 12.8705 12.0546 12.8705 11.9739 12.8806C10.2001 12.8202 8.78906 11.3688 8.78906 9.58488C8.78906 7.76063 10.2606 6.27905 12.0949 6.27905C13.9191 6.27905 15.4007 7.76063 15.4007 9.58488C15.3906 11.3688 13.9897 12.8202 12.2158 12.8806Z" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.8874 19.5327C17.0934 21.1755 14.7148 22.1733 12.0943 22.1733C9.47387 22.1733 7.09529 21.1755 5.30127 19.5327C5.40206 18.5853 6.00678 17.6581 7.08521 16.9324C9.84678 15.0981 14.3621 15.0981 17.1035 16.9324C18.1819 17.6581 18.7866 18.5853 18.8874 19.5327Z" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12.0944 22.1732C17.6607 22.1732 22.1731 17.6608 22.1731 12.0945C22.1731 6.52815 17.6607 2.01575 12.0944 2.01575C6.52803 2.01575 2.01562 6.52815 2.01562 12.0945C2.01562 17.6608 6.52803 22.1732 12.0944 22.1732Z" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-const IdCardStepIcon = () => (
-  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h2a2 2 0 012 2v1m-6 0h6" />
+const IdCardStepIcon = ({ isCompleted, isActive }: { isCompleted?: boolean; isActive?: boolean }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 3.5H10C6.22876 3.5 4.34315 3.5 3.17157 4.67157C2 5.84315 2 7.72876 2 11.5V12.5C2 16.2712 2 18.1569 3.17157 19.3284C4.34315 20.5 6.22876 20.5 10 20.5H14C17.7712 20.5 19.6569 20.5 20.8284 19.3284C22 18.1569 22 16.2712 22 12.5V11.5C22 7.72876 22 5.84315 20.8284 4.67157C19.6569 3.5 17.7712 3.5 14 3.5Z" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinejoin="round"/>
+    <path d="M5 16C6.03569 13.4189 9.89616 13.2491 11 16" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round"/>
+    <path d="M9.75 9.75C9.75 10.7165 8.9665 11.5 8 11.5C7.0335 11.5 6.25 10.7165 6.25 9.75C6.25 8.7835 7.0335 8 8 8C8.9665 8 9.75 8.7835 9.75 9.75Z" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6"/>
+    <path d="M14 8.5H19M14 12H19M14 15.5H16.5" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-const GraduationStepIcon = () => (
-  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.083 0 01.665-6.479L12 14z" />
+const GraduationStepIcon = ({ isCompleted, isActive }: { isCompleted?: boolean; isActive?: boolean }) => (
+  <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22.1731 4.89571V17.0608C22.1731 18.0283 21.387 18.9354 20.4194 19.0563L20.0868 19.0967C17.8896 19.389 14.5032 20.5077 12.568 21.576C12.306 21.7272 11.8726 21.7272 11.6005 21.576L11.5602 21.5559C9.62504 20.4976 6.24873 19.389 4.06164 19.0967L3.76932 19.0563C2.80176 18.9354 2.01562 18.0283 2.01562 17.0608V4.88562C2.01562 3.68625 2.99324 2.77918 4.19261 2.87997C6.30914 3.0513 9.51418 4.11968 11.3082 5.23842L11.5602 5.38956C11.8524 5.57098 12.3363 5.57098 12.6286 5.38956L12.7999 5.27871C13.4348 4.88564 14.2411 4.49256 15.118 4.13981V8.25195L17.1337 6.91146L19.1495 8.25195V2.99088C19.4216 2.94048 19.6837 2.91021 19.9256 2.89005H19.986C21.1854 2.78927 22.1731 3.68626 22.1731 4.89571Z" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12.0947 5.72217V20.8403" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-const EyeStepIcon = () => (
-  <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+const EyeStepIcon = ({ isCompleted, isActive }: { isCompleted?: boolean; isActive?: boolean }) => (
+  <svg width="20" height="20" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 20.4126H21" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M11 13.4126H21" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M11 6.4126H21" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3 6.4126L4 7.4126L7 4.4126" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3 13.4126L4 14.4126L7 11.4126" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3 20.4126L4 21.4126L7 18.4126" stroke={isCompleted ? "#15803d" : isActive ? "#1453a3" : "#475569"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-const InfoTrigger = ({ pdfUrl }: { pdfUrl: string }) => (
+const InfoTrigger = ({ pdfUrl, isCompleted }: { pdfUrl: string; isCompleted?: boolean }) => (
   <button
     type="button"
     onClick={(e) => {
       e.stopPropagation();
       window.open(pdfUrl, '_blank');
     }}
-    className="p-1 rounded text-slate-500 hover:text-blue-700 transition-colors"
-    title="View Instruction PDF"
+    className="inline-flex items-center justify-center p-0.5 rounded cursor-pointer transition-transform hover:scale-105"
+    title="Click for instructions"
   >
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg width="18" height="18" viewBox="0 0 568 568" fill="none" className="shrink-0">
+      <circle cx="284" cy="284" r="284" fill={isCompleted ? "#15803d" : "#195893"}/>
+      <path d="M252.321 252.5C242.321 256.5 217.321 285.167 211.321 294C204.921 296.4 200.655 295 199.321 294C189.822 287.5 208.323 238 276.321 214.5C344.319 191.001 346.821 233 342.321 252.5C337.821 272 295.821 384.5 289.821 396.5C283.821 408.5 288.321 412 295.821 411C303.321 410 323.321 389.5 334.821 374.5C346.321 359.5 354.821 370 350.821 384.5C317.321 437 274.321 459 228.821 454.5C192.421 450.9 207.321 395 219.321 367.5L255.321 278C261.988 264.5 262.321 248.5 252.321 252.5Z" fill="white"/>
+      <path d="M370.322 153.5C370.322 175.315 352.638 193 330.822 193C309.007 193 291.322 175.315 291.322 153.5C291.322 131.685 312.007 112 333.822 112C355.638 112 370.322 131.685 370.322 153.5Z" fill="white"/>
     </svg>
   </button>
 );
@@ -209,8 +221,8 @@ export default function ShowcasePage() {
                   variant="stepCard"
                   isSelected={activeStep === 0 || activeStep === 1}
                   isCompleted={activeStep > 1}
-                  icon={<UserStepIcon />}
-                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  icon={<UserStepIcon isCompleted={activeStep > 1} isActive={activeStep === 0 || activeStep === 1} />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" isCompleted={activeStep > 1} />}
                   statusIcon={activeStep > 1 ? <CheckIcon /> : undefined}
                   onClick={() => setActiveStep(1)}
                 />
@@ -220,8 +232,8 @@ export default function ShowcasePage() {
                   isSelected={activeStep === 2}
                   isCompleted={activeStep > 2}
                   isLocked={activeStep < 2}
-                  icon={<IdCardStepIcon />}
-                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  icon={<IdCardStepIcon isCompleted={activeStep > 2} isActive={activeStep === 2} />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" isCompleted={activeStep > 2} />}
                   statusIcon={activeStep > 2 ? <CheckIcon /> : activeStep < 2 ? <LockIcon /> : undefined}
                   onClick={() => activeStep >= 1 && setActiveStep(2)}
                 />
@@ -231,8 +243,8 @@ export default function ShowcasePage() {
                   isSelected={activeStep === 3}
                   isCompleted={activeStep > 3}
                   isLocked={activeStep < 3}
-                  icon={<GraduationStepIcon />}
-                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  icon={<GraduationStepIcon isCompleted={activeStep > 3} isActive={activeStep === 3} />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" isCompleted={activeStep > 3} />}
                   statusIcon={activeStep > 3 ? <CheckIcon /> : activeStep < 3 ? <LockIcon /> : undefined}
                   onClick={() => activeStep >= 2 && setActiveStep(3)}
                 />
@@ -242,8 +254,8 @@ export default function ShowcasePage() {
                   isSelected={activeStep === 4}
                   isCompleted={activeStep === 4}
                   isLocked={activeStep < 4}
-                  icon={<EyeStepIcon />}
-                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" />}
+                  icon={<EyeStepIcon isCompleted={activeStep === 4} isActive={activeStep === 4} />}
+                  infoSlot={<InfoTrigger pdfUrl="https://upsc.gov.in/sites/default/files/Instruction-OTR-Eng_0.pdf" isCompleted={activeStep === 4} />}
                   statusIcon={activeStep < 4 ? <LockIcon /> : <CheckIcon />}
                   onClick={() => activeStep >= 3 && setActiveStep(4)}
                 />
