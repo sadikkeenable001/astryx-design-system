@@ -35,6 +35,7 @@ import {themeProps} from '../utils/themeProps';
 // Styles
 // =============================================================================
 
+ 
 const styles = stylex.create({
   root: {
     display: 'flex',
@@ -49,6 +50,38 @@ const styles = stylex.create({
     paddingBlock: spacingVars['--spacing-1'],
     cursor: 'default',
     userSelect: 'none',
+  },
+  headerBanner: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingInline: spacingVars['--spacing-3'],
+    paddingBlock: spacingVars['--spacing-2'],
+    backgroundColor: '#1453a3',
+    color: '#ffffff',
+    borderRadius: '8px',
+    marginBottom: spacingVars['--spacing-2'],
+    cursor: 'default',
+    userSelect: 'none',
+  },
+  headerBannerCollapsed: {
+    height: '40px',
+    paddingInline: 0,
+    borderRadius: '4px',
+  },
+  bannerTitle: {
+    fontSize: typeScaleVars['--text-supporting-size'],
+    fontWeight: fontWeightVars['--font-weight-semibold'],
+    color: '#ffffff',
+    textAlign: 'center',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  bannerTitleCollapsed: {
+    fontSize: '18px',
+    fontWeight: fontWeightVars['--font-weight-bold'],
+    lineHeight: '1',
   },
 
   titleContainer: {
@@ -83,9 +116,20 @@ const styles = stylex.create({
   items: {
     display: 'flex',
     flexDirection: 'column',
-    gap: spacingVars['--spacing-0-5'],
+    gap: spacingVars['--spacing-2'],
   },
 });
+
+function getCollapsedTitle(title: string): string {
+  const t = String(title || '').trim();
+  if (!t) {return 'UR';}
+  if (t.toLowerCase() === 'universal registration') {return 'UR';}
+  const parts = t.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
+  }
+  return t.slice(0, 2).toUpperCase();
+}
 
 // =============================================================================
 // Types
@@ -101,6 +145,11 @@ export interface SideNavSectionProps extends BaseProps<HTMLDivElement> {
    * Section subtitle.
    */
   subtitle?: string;
+  /**
+   * Header visual variant. Set to 'banner' for a solid colored header banner block.
+   * @default 'default'
+   */
+  headerVariant?: 'default' | 'banner';
   /**
    * Section items.
    */
@@ -139,6 +188,7 @@ export function SideNavSection({
   ref,
   title,
   subtitle,
+  headerVariant = 'default',
   children,
   endContent,
   isHeaderHidden = false,
@@ -152,7 +202,25 @@ export function SideNavSection({
   const id = useId();
   const titleId = `${id}-title`;
 
-  const headerContent = (
+  const isBanner = headerVariant === 'banner';
+
+  const headerContent = isBanner ? (
+    <div
+      id={titleId}
+      {...stylex.props(
+        styles.headerBanner,
+        isCollapsed && styles.headerBannerCollapsed,
+      )}
+      title={title}>
+      <span
+        {...stylex.props(
+          styles.bannerTitle,
+          isCollapsed && styles.bannerTitleCollapsed,
+        )}>
+        {isCollapsed ? getCollapsedTitle(title) : title}
+      </span>
+    </div>
+  ) : (
     <>
       <span {...stylex.props(styles.titleContainer)}>
         <span id={titleId} {...stylex.props(styles.title)}>
@@ -166,7 +234,7 @@ export function SideNavSection({
     </>
   );
 
-  const shouldHideHeader = isHeaderHidden || isCollapsed;
+  const shouldHideHeader = isHeaderHidden || (isCollapsed && !isBanner);
 
   return (
     <div
@@ -183,6 +251,8 @@ export function SideNavSection({
       data-testid={testId}>
       {shouldHideHeader ? (
         <VisuallyHidden as="div">{headerContent}</VisuallyHidden>
+      ) : isBanner ? (
+        headerContent
       ) : (
         <div {...stylex.props(styles.header)}>{headerContent}</div>
       )}

@@ -145,6 +145,16 @@ const styles = stylex.create({
     boxSizing: 'border-box',
     overflow: 'hidden',
   },
+   
+  card: {
+    backgroundColor: '#ffffff',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: '#e2e8f0',
+    borderRadius: '16px',
+    padding: spacingVars['--spacing-3'],
+    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+  },
   rootCollapsed: {
     width: spacingVars['--spacing-12'],
   },
@@ -356,6 +366,12 @@ export interface SideNavProps extends BaseProps<HTMLElement> {
   resizable?: boolean | ResizableConfig;
 
   /**
+   * Visual container variant. Set to 'card' for an elevated boxed card container.
+   * @default 'default'
+   */
+  variant?: 'default' | 'card';
+
+  /**
    * Enables collapse behavior. The sidebar can be collapsed to a narrow
    * icon-only toolbar.
    *
@@ -400,6 +416,7 @@ export function SideNav({
   children,
   footer,
   footerIcons,
+  variant = 'default',
   collapsible = false,
   resizable = false,
   xstyle,
@@ -596,7 +613,12 @@ export function SideNav({
       data-testid={testId}
       {...mergeProps(
         themeProps('side-nav'),
-        stylex.props(styles.root, collapsed && styles.rootCollapsed, xstyle),
+        stylex.props(
+          styles.root,
+          variant === 'card' && styles.card,
+          collapsed && styles.rootCollapsed,
+          xstyle,
+        ),
         className,
         resizableNavStyle,
       )}

@@ -219,6 +219,7 @@ const styles = stylex.create({
     marginInlineStart: spacingVars['--spacing-1'],
     marginInlineEnd: spacingVars['--spacing-1'],
   },
+   
   popoverHeader: {
     paddingInline: spacingVars['--spacing-2'],
     paddingBlock: spacingVars['--spacing-1'],
@@ -226,6 +227,56 @@ const styles = stylex.create({
     fontWeight: fontWeightVars['--font-weight-semibold'],
     color: colorVars['--color-text-secondary'],
     lineHeight: typeScaleVars['--text-supporting-leading'],
+  },
+   
+  stepCard: {
+    borderRadius: '8px',
+    paddingInline: spacingVars['--spacing-3'],
+    paddingBlock: spacingVars['--spacing-2'],
+    backgroundColor: '#ffffff',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'transparent',
+    transitionProperty: 'background-color, border-color, color',
+    transitionDuration: durationVars['--duration-fast'],
+  },
+   
+  stepCardActive: {
+    backgroundColor: '#eaf2ff',
+    borderColor: '#1453a3',
+    color: '#0f172a',
+  },
+   
+  stepCardCompleted: {
+    backgroundColor: '#d7f5dd',
+    borderColor: 'transparent',
+    color: '#0f172a',
+  },
+   
+  stepCardLocked: {
+    backgroundColor: '#ffffff',
+    borderColor: 'transparent',
+    opacity: 0.6,
+  },
+   
+  iconBox: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '28px',
+    height: '28px',
+    borderRadius: '6px',
+    backgroundColor: '#f8fafc',
+    flexShrink: 0,
+    marginInlineEnd: spacingVars['--spacing-2'],
+  },
+   
+  iconBoxActive: {
+    backgroundColor: '#ffffff',
+  },
+   
+  iconBoxCompleted: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
 });
 
@@ -328,6 +379,33 @@ export interface SideNavItemProps extends BaseProps<HTMLElement> {
    */
   isSelected?: boolean;
   /**
+   * Whether the item step is completed.
+   * @default false
+   */
+  isCompleted?: boolean;
+  /**
+   * Whether the item step is locked.
+   * @default false
+   */
+  isLocked?: boolean;
+  /**
+   * Optional status icon to display at trailing edge (e.g. checkmark or lock).
+   */
+  statusIcon?: ReactNode;
+  /**
+   * Optional info button/slot to trigger help/instructions.
+   */
+  infoSlot?: ReactNode;
+  /**
+   * Visual item variant. Set to 'stepCard' for rounded card step styling.
+   * @default 'default'
+   */
+  variant?: 'default' | 'stepCard' | 'boxed';
+  /**
+   * Custom style override for the icon container box.
+   */
+  iconBoxStyle?: stylex.StyleXStyles;
+  /**
    * Whether the item is disabled.
    * @default false
    */
@@ -428,6 +506,12 @@ export function SideNavItem({
   icon,
   selectedIcon,
   isSelected = false,
+  isCompleted = false,
+  isLocked = false,
+  statusIcon,
+  infoSlot,
+  variant = 'default',
+  iconBoxStyle,
   isDisabled = false,
   href,
   onClick,
@@ -633,18 +717,43 @@ export function SideNavItem({
     );
   }
 
-  const itemContent = (
-    <>
-      {displayIcon &&
-        renderIconSlot(displayIcon, {
+  const isStepCard = variant === 'stepCard';
+
+  const iconElement = displayIcon ? (
+    isStepCard ? (
+      <span
+        {...stylex.props(
+          styles.iconBox,
+          isSelected && styles.iconBoxActive,
+          isCompleted && styles.iconBoxCompleted,
+          iconBoxStyle,
+        )}>
+        {renderIconSlot(displayIcon, {
           size: 'sm',
-          // `inherit` — see the collapsed path above.
           color: isSelected ? 'inherit' : isDisabled ? 'disabled' : 'secondary',
         })}
+      </span>
+    ) : (
+      renderIconSlot(displayIcon, {
+        size: 'sm',
+        color: isSelected ? 'inherit' : isDisabled ? 'disabled' : 'secondary',
+      })
+    )
+  ) : null;
+
+  const endContentElement = (infoSlot || statusIcon || endContent) && (
+    <span {...stylex.props(styles.endContent)}>
+      {infoSlot}
+      {statusIcon}
+      {endContent}
+    </span>
+  );
+
+  const itemContent = (
+    <>
+      {iconElement}
       {!isCollapsed && <span {...stylex.props(styles.label)}>{label}</span>}
-      {!isCollapsed && endContent && (
-        <span {...stylex.props(styles.endContent)}>{endContent}</span>
-      )}
+      {!isCollapsed && endContentElement}
       {!isCollapsed && isItemCollapsible && !hasIndependentToggle && (
         <Icon
           icon="chevronDown"
@@ -669,7 +778,11 @@ export function SideNavItem({
     navItemStyles.item,
     interactionOverlayStyles.backgroundColor,
     navItemStyles[size],
-    isSelected && navItemStyles.selected,
+    isStepCard && styles.stepCard,
+    isStepCard && isSelected && !isCompleted && styles.stepCardActive,
+    isStepCard && isCompleted && styles.stepCardCompleted,
+    isStepCard && isLocked && styles.stepCardLocked,
+    !isStepCard && isSelected && navItemStyles.selected,
     isDisabled && navItemStyles.disabled,
   ] as const;
 
