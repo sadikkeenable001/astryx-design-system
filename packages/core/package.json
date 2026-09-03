@@ -324,6 +324,31 @@
       "types": "./dist/Kbd/index.d.ts",
       "default": "./dist/Kbd/index.js"
     },
+    "./MaskedInput": {
+      "source": "./src/MaskedInput/index.ts",
+      "types": "./dist/MaskedInput/index.d.ts",
+      "default": "./dist/MaskedInput/index.js"
+    },
+    "./OtpInput": {
+      "source": "./src/OtpInput/index.ts",
+      "types": "./dist/OtpInput/index.d.ts",
+      "default": "./dist/OtpInput/index.js"
+    },
+    "./ImageUploader": {
+      "source": "./src/ImageUploader/index.ts",
+      "types": "./dist/ImageUploader/index.d.ts",
+      "default": "./dist/ImageUploader/index.js"
+    },
+    "./CanvasCaptcha": {
+      "source": "./src/CanvasCaptcha/index.ts",
+      "types": "./dist/CanvasCaptcha/index.d.ts",
+      "default": "./dist/CanvasCaptcha/index.js"
+    },
+    "./KeyValueGrid": {
+      "source": "./src/KeyValueGrid/index.ts",
+      "types": "./dist/KeyValueGrid/index.d.ts",
+      "default": "./dist/KeyValueGrid/index.js"
+    },
     "./Layer": {
       "source": "./src/Layer/index.ts",
       "types": "./dist/Layer/index.d.ts",
