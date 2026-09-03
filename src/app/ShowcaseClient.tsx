@@ -232,10 +232,17 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
             </ol>
           </div>
 
-          {/* Yellow Declaration Box using Astryx CheckboxInput */}
-          <div className="mt-6 p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
+          {/* Declaration Box using Astryx CheckboxInput with variant="card" */}
+          <div className="mt-6">
             <CheckboxInput
-              label="I hereby declare that I have read and understood the above Instructions carefully and I accept all the terms and conditions mentioned hereinabove. *"
+              variant="card"
+              boxedBgColor="#fff8e5"
+              boxedBorderColor="#f0c36d"
+              boxedHoverBgColor="#fff3cc"
+              boxedHoverBorderColor="#f0a500"
+              boxedRadius="12px"
+              boxedPadding="12px 16px"
+              label="I hereby declare that I have read and understood the above Instructions carefully and I accept all the terms and conditions mentioned hereinabove."
               value={step1Accepted}
               onChange={(checked) => setStep1Accepted(checked)}
               isRequired
