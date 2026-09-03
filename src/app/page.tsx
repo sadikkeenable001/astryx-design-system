@@ -210,10 +210,10 @@ export default function ShowcasePage() {
         </Card>
 
         {/* Main 2-Column Layout: Extended Astryx SideNav + Step Forms */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 items-start w-full">
           
           {/* Left Sidebar: Native Astryx SideNav in Card Variant */}
-          <div className="lg:col-span-4 xl:col-span-3">
+          <div className="shrink-0">
             <SideNav variant="card" collapsible={{ defaultIsCollapsed: false }}>
               <SideNavSection title="Universal Registration" headerVariant="banner">
                 <SideNavItem
@@ -264,7 +264,7 @@ export default function ShowcasePage() {
           </div>
 
           {/* Right Main Content Area */}
-          <div className="lg:col-span-8 xl:col-span-9">
+          <div className="flex-1 min-w-0">
 
         {/* =============================================================================
             STEP 1: AUTH & SECURITY OTP CONTROLS
