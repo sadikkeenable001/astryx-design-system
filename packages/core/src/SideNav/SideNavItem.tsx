@@ -343,6 +343,29 @@ function NavItemElement({
       </LinkComponent>
     );
   }
+  const Element = (as as React.ElementType) || 'button';
+  if (Element === 'div') {
+    return (
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
+        role="button"
+        tabIndex={isDisabled ? -1 : 0}
+        onClick={onClick}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick?.(
+              e as unknown as React.MouseEvent<
+                HTMLAnchorElement | HTMLButtonElement
+              >,
+            );
+          }
+        }}
+        {...rest}>
+        {children}
+      </div>
+    );
+  }
   return (
     <button
       ref={ref as React.Ref<HTMLButtonElement>}
@@ -726,15 +749,32 @@ export function SideNavItem({
 
   const isStepCard = variant === 'stepCard';
 
+  const iconBoxProps = stylex.props(
+    styles.iconBox,
+    isSelected && styles.iconBoxActive,
+    isCompleted && styles.iconBoxCompleted,
+    iconBoxStyle,
+  );
+
   const iconElement = displayIcon ? (
     isStepCard ? (
       <span
-        {...stylex.props(
-          styles.iconBox,
-          isSelected && styles.iconBoxActive,
-          isCompleted && styles.iconBoxCompleted,
-          iconBoxStyle,
-        )}>
+        className={iconBoxProps.className}
+        style={{
+          ...iconBoxProps.style,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 28,
+          height: 28,
+          borderRadius: 6,
+          backgroundColor: isSelected
+            ? '#ffffff'
+            : isCompleted
+              ? 'rgba(255,255,255,0.8)'
+              : '#f8fafc',
+          flexShrink: 0,
+        }}>
         {renderIconSlot(displayIcon, {
           size: 'sm',
           color: isSelected ? 'inherit' : isDisabled ? 'disabled' : 'secondary',
@@ -894,13 +934,43 @@ export function SideNavItem({
       'data-testid': testId,
     };
 
+    const stepCardInlineStyle: React.CSSProperties | undefined = isStepCard
+      ? {
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          width: '100%',
+          minHeight: 44,
+          padding: '8px 12px',
+          borderRadius: 8,
+          fontSize: 12,
+          fontWeight: 500,
+          boxSizing: 'border-box',
+          border:
+            isSelected && !isCompleted
+              ? '1px solid #1453a3'
+              : isCompleted
+                ? '1px solid #bbf7d0'
+                : '1px solid #e2e8f0',
+          backgroundColor:
+            isSelected && !isCompleted
+              ? '#eaf2ff'
+              : isCompleted
+                ? '#d7f5dd'
+                : '#ffffff',
+          color: '#0f172a',
+          cursor: isDisabled ? 'default' : 'pointer',
+        }
+      : undefined;
+
     itemElement = (
       <NavItemElement
         ref={ref}
         href={href}
-        as={as}
+        as={as || (infoSlot || endContent || actions ? 'div' : undefined)}
         isDisabled={isDisabled}
         onClick={handleClick}
+        style={stepCardInlineStyle}
         {...rest}
         {...ariaProps}
         {...focusableRowProps}>
