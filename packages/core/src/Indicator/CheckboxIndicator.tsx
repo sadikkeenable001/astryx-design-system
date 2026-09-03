@@ -122,34 +122,46 @@ const styles = stylex.create({
 });
 
 const boxSizeStyles = stylex.create({
+  xs: {
+    width: 12,
+    height: 12,
+  },
   sm: {
-    width: 20,
-    height: 20,
+    width: 14,
+    height: 14,
   },
   md: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
   },
 });
 
 const checkmarkSizeStyles = stylex.create({
+  xs: {
+    width: 8,
+    height: 8,
+  },
   sm: {
-    width: 12,
-    height: 12,
+    width: 10,
+    height: 10,
   },
   md: {
-    width: 14,
-    height: 14,
+    width: 12,
+    height: 12,
   },
 });
 
 const indeterminateSizeStyles = stylex.create({
+  xs: {
+    width: 6,
+    height: 2,
+  },
   sm: {
-    width: 10,
+    width: 8,
     height: 2,
   },
   md: {
-    width: 12,
+    width: 10,
     height: 2,
   },
 });

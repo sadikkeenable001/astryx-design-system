@@ -122,13 +122,13 @@ export const docs = {
       name: 'labelFontWeight',
       type: "CSSProperties['fontWeight']",
       description: 'Custom font weight for the label text.',
-      default: "600 (for boxed) / 500 (standard)",
+      default: "'bold' (for boxed) / 500 (standard)",
     },
     {
       name: 'labelFontSize',
       type: "CSSProperties['fontSize']",
       description: 'Custom font size for the label text.',
-      default: "'12px' (for boxed) / '14px' (standard)",
+      default: "'11px' (for boxed) / '14px' (standard)",
     },
     {
       name: 'isDisabled',

@@ -80,13 +80,17 @@ const styles = stylex.create({
 });
 
 const wrapperSizeStyles = stylex.create({
+  xs: {
+    width: 12,
+    height: 12,
+  },
   sm: {
-    width: 20,
-    height: 20,
+    width: 14,
+    height: 14,
   },
   md: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
   },
 });
 

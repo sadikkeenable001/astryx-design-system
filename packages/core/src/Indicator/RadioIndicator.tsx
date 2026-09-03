@@ -100,24 +100,32 @@ const styles = stylex.create({
 });
 
 const circleSizeStyles = stylex.create({
+  xs: {
+    width: 12,
+    height: 12,
+  },
   sm: {
-    width: 20,
-    height: 20,
+    width: 14,
+    height: 14,
   },
   md: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
   },
 });
 
 const dotSizeStyles = stylex.create({
+  xs: {
+    width: 4,
+    height: 4,
+  },
   sm: {
-    width: 8,
-    height: 8,
+    width: 6,
+    height: 6,
   },
   md: {
-    width: 10,
-    height: 10,
+    width: 8,
+    height: 8,
   },
 });
 
