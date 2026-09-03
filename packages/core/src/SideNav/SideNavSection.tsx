@@ -204,16 +204,37 @@ export function SideNavSection({
   const {isCollapsed} = useSideNavCollapse();
   const id = useId();
   const titleId = `${id}-title`;
-
   const isBanner = headerVariant === 'banner';
+
+  const bannerInlineStyle: React.CSSProperties | undefined = isBanner
+    ? {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: isCollapsed ? 40 : 36,
+        padding: isCollapsed ? 0 : '0 12px',
+        backgroundColor: '#1453a3',
+        color: '#ffffff',
+        borderRadius: isCollapsed ? 4 : 8,
+        marginBottom: 12,
+        userSelect: 'none',
+        boxSizing: 'border-box',
+      }
+    : undefined;
+
+  const headerBannerProps = stylex.props(
+    styles.headerBanner,
+    isCollapsed && styles.headerBannerCollapsed,
+  );
 
   const headerContent = isBanner ? (
     <div
       id={titleId}
-      {...stylex.props(
-        styles.headerBanner,
-        isCollapsed && styles.headerBannerCollapsed,
-      )}
+      className={headerBannerProps.className}
+      style={{
+        ...headerBannerProps.style,
+        ...bannerInlineStyle,
+      }}
       title={title}>
       <span
         {...stylex.props(

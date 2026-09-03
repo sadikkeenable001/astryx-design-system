@@ -645,12 +645,26 @@ export function SideNav({
     ? {...(style ?? {}), width: collapsed ? undefined : resizableHook.size}
     : style;
 
+  const cardInlineStyle: React.CSSProperties | undefined =
+    variant === 'card'
+      ? {
+          padding: 12,
+          borderRadius: 16,
+          border: '1px solid #e2e8f0',
+          backgroundColor: '#ffffff',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+          width: collapsed ? 76 : 320,
+          boxSizing: 'border-box',
+        }
+      : undefined;
+
   const navElement = (
     <nav
       ref={mergedNavRef}
       role="navigation"
       aria-label={t('@astryx.sideNav.label')}
       data-testid={testId}
+      style={{...cardInlineStyle, ...(resizableNavStyle ?? {})}}
       {...mergeProps(
         themeProps('side-nav'),
         stylex.props(
@@ -660,7 +674,6 @@ export function SideNav({
           xstyle,
         ),
         className,
-        resizableNavStyle,
       )}
       {...props}>
       {showCollapseButton && variant === 'card' && (
@@ -673,6 +686,19 @@ export function SideNav({
             type="button"
             aria-label="Toggle sidebar"
             onClick={toggle}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#ffffff',
+              color: '#334155',
+              cursor: 'pointer',
+              boxSizing: 'border-box',
+            }}
             {...stylex.props(styles.headerToggleButton)}>
             <Icon icon="menu" size="sm" />
           </button>
