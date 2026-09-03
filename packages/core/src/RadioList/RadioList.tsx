@@ -284,7 +284,7 @@ export function RadioList({
   disabledMessage,
   isRequired = false,
   isOptional = false,
-  size = 'md',
+  size,
   status,
   labelTooltip,
   width,
@@ -295,6 +295,9 @@ export function RadioList({
   htmlName,
   children,
 }: RadioListProps) {
+  const isBoxed = variant === 'boxed' || variant === 'card';
+  const effectiveSize = size ?? (isBoxed ? 'sm' : 'sm');
+
   const autoName = useId();
   const name = htmlName ?? autoName;
   const inputID = useId();
@@ -333,7 +336,7 @@ export function RadioList({
       isDisabled,
       hasDisabledMessage: showsDisabledMessage,
       isRequired,
-      size,
+      size: effectiveSize,
       status,
     }),
     [
@@ -343,7 +346,7 @@ export function RadioList({
       isDisabled,
       showsDisabledMessage,
       isRequired,
-      size,
+      effectiveSize,
       status,
     ],
   );
@@ -430,12 +433,11 @@ export function RadioList({
     [value],
   );
 
-  const isBoxed = variant === 'boxed' || variant === 'card';
   const effectiveLabelPosition = labelPosition ?? (isBoxed ? 'left' : 'top');
   const effectiveLabelFontWeight =
-    labelFontWeight ?? (isBoxed ? 600 : undefined);
+    labelFontWeight ?? (isBoxed ? 'bold' : undefined);
   const effectiveLabelFontSize =
-    labelFontSize ?? (isBoxed ? '12px' : undefined);
+    labelFontSize ?? (isBoxed ? '11px' : undefined);
 
   const controlsNode = (
     <div
@@ -461,7 +463,7 @@ export function RadioList({
       aria-invalid={status?.type === 'error' ? true : undefined}
       aria-required={isEffectivelyRequired || undefined}
       {...mergeProps(
-        themeProps('radio-list', {orientation, size}),
+        themeProps('radio-list', {orientation, size: effectiveSize}),
         stylex.props(
           styles.radiogroup,
           orientation === 'vertical' ? styles.vertical : styles.horizontal,

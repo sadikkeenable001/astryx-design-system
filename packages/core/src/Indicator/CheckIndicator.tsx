@@ -38,6 +38,7 @@ import type {IndicatorProps} from './types';
 
 /** The check glyph matches the control sizes the indicator families share. */
 const iconSizeForIndicator = {
+  xs: 'sm',
   sm: 'sm',
   md: 'sm',
 } as const;
