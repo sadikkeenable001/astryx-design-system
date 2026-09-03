@@ -102,12 +102,42 @@ const InfoTrigger = ({ pdfUrl, isCompleted }: { pdfUrl: string; isCompleted?: bo
   />
 );
 
+function RegistrationStepperIllustration({ step }: { step: number }) {
+  return (
+    <div className="hidden md:flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-slate-100 border border-[#d9e2f2] rounded-2xl h-full min-h-[340px]">
+      <svg className="w-56 h-56 text-[#195992]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="80" fill="#EBF3FA" />
+        <rect x="50" y="45" width="100" height="110" rx="12" fill="white" stroke="#195992" strokeWidth="4" />
+        <circle cx="100" cy="75" r="18" fill="#195992" />
+        <path d="M70 125C70 110 83 105 100 105C117 105 130 110 130 125" stroke="#195992" strokeWidth="4" strokeLinecap="round" />
+        <rect x="65" y="133" width="70" height="6" rx="3" fill="#2563EB" />
+        <rect x="75" y="143" width="50" height="4" rx="2" fill="#93C5FD" />
+        {step >= 2 && (
+          <g transform="translate(130, 40)">
+            <circle cx="20" cy="20" r="22" fill="#2563EB" />
+            <path d="M12 20L18 26L28 14" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        )}
+      </svg>
+      <Text className="mt-4 font-bold text-[#195992] text-sm text-center">
+        {step === 2 && "Email ID Verification & Security Check"}
+        {step === 3 && "Mobile Number SMS Verification"}
+        {step === 4 && "Password Security & Account Creation"}
+      </Text>
+    </div>
+  );
+}
+
 function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegistration: () => void }) {
   const [otrStep, setOtrStep] = useState<number>(1);
   
+  // Step 1 states
+  const [step1Accepted, setStep1Accepted] = useState(false);
+
   // Email states
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
+  const [emailOwnershipAccepted, setEmailOwnershipAccepted] = useState(false);
   const [isEmailOtpSent, setIsEmailOtpSent] = useState(false);
   const [emailOtp, setEmailOtp] = useState('');
   const [emailTimer, setEmailTimer] = useState(60);
@@ -115,6 +145,7 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
   // Mobile states
   const [mobile, setMobile] = useState('');
   const [confirmMobile, setConfirmMobile] = useState('');
+  const [mobileOwnershipAccepted, setMobileOwnershipAccepted] = useState(false);
   const [isMobileOtpSent, setIsMobileOtpSent] = useState(false);
   const [mobileOtp, setMobileOtp] = useState('');
   const [mobileTimer, setMobileTimer] = useState(60);
@@ -122,7 +153,7 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
   // Password states
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [passwordAccepted, setPasswordAccepted] = useState(false);
   const [otrId, setOtrId] = useState('');
 
   const steps = [
@@ -178,326 +209,490 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
 
       {/* STEP 1: INSTRUCTIONS */}
       {otrStep === 1 && (
-        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
-          <div className="border-b pb-3 flex items-center justify-between">
-            <Heading level={3} className="text-lg font-bold text-[#195992]">
-              Step 1 : Candidate Pre-Account Creation Guidelines
+        <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-6 md:p-8 shadow-md space-y-6">
+          <div className="text-center">
+            <Heading level={2} className="text-lg md:text-xl font-bold text-[#195992]">
+              Step 1: Instructions for creating your account
             </Heading>
-            <Badge label="OTR Setup" />
+            <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
           </div>
 
-          <div className="space-y-4 text-sm text-slate-700 leading-relaxed">
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
-              <Text className="font-semibold text-base mb-1">Important Notice for First-Time Applicants:</Text>
-              <Text>
-                One-Time Registration (OTR) is mandatory for applying to all Universal Registration Scheme examinations. Ensure that you enter a valid and active <b>Email ID</b> and <b>Mobile Number</b>.
-              </Text>
+          <div className="mt-4 text-sm leading-relaxed text-[#111827] md:text-base">
+            <ol className="list-decimal space-y-3 pl-5 text-slate-800">
+              <li>
+                You should have an email ID and mobile number for account creation over which you will receive OTP for verification.
+              </li>
+              <li>
+                After successful verification of an email ID and mobile number, you have to create a password which shall be of minimum 8 characters long comprising at least one upper case (eg. A–Z) &amp; one lower case (eg. a–z) alphabet, one number (eg. 0–9) and one special character (eg. *, @, # etc.).
+              </li>
+              <li>
+                All correspondence with and from UPSC will be made only through this email ID and mobile number. Therefore, you are advised to keep the details as your permanent record and ensure that both remain active and accessible at all times for all future applications.
+              </li>
+            </ol>
+          </div>
+
+          {/* Yellow Declaration Box */}
+          <div className="mt-6">
+            <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
+              <input
+                id="step1Terms"
+                type="checkbox"
+                checked={step1Accepted}
+                onChange={(e) => setStep1Accepted(e.target.checked)}
+                className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+              />
+              <label htmlFor="step1Terms" className="cursor-pointer text-sm leading-snug text-[#333]">
+                I hereby declare that I have read and understood the above Instructions carefully and I accept all the terms and conditions mentioned hereinabove. <span className="text-red-600"> *</span>
+              </label>
             </div>
-
-            <ul className="list-disc pl-5 space-y-2 text-slate-700">
-              <li><b>Email ID Verification:</b> A 6-digit OTP will be sent to your registered Email address.</li>
-              <li><b>Mobile Number Verification:</b> A 6-digit OTP will be sent via SMS to your 10-digit mobile number.</li>
-              <li><b>Password Guidelines:</b> Passwords must be 8 to 16 characters in length containing uppercase, lowercase, numbers, and special characters.</li>
-              <li><b>Single Account Policy:</b> A candidate can create only ONE OTR profile linked to their Aadhaar / Photo ID and Class 10th details.</li>
-            </ul>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-slate-200">
-            <Button
-              label="Proceed to Verify Email ID"
-              variant="primary"
+          {/* Centered Submit Button */}
+          <div className="pt-4 flex items-center justify-center">
+            <button
+              type="button"
+              disabled={!step1Accepted}
               onClick={() => setOtrStep(2)}
+              className="rounded-full bg-[#195992] px-16 py-3.5 text-sm font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
             >
-              Proceed to Step 2: Verify Email ID →
-            </Button>
+              Proceed for Account Creation
+            </button>
           </div>
         </Card>
       )}
 
       {/* STEP 2: VERIFY EMAIL ID */}
       {otrStep === 2 && (
-        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
-          <div className="border-b pb-3">
-            <Heading level={3} className="text-lg font-bold text-[#195992]">
-              Step 2 : Verify Email ID
-            </Heading>
-            <Text className="text-xs text-slate-500 mt-0.5">
-              Enter your active email address to receive and verify the 6-digit Email OTP code.
-            </Text>
-          </div>
+        <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-6 md:p-8 shadow-md">
+          <div className="grid gap-6 md:grid-cols-2 md:items-center">
+            {/* Left Column: Illustration */}
+            <RegistrationStepperIllustration step={2} />
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <TextInput
-              label="Email ID *"
-              placeholder="candidate@example.com"
-              type="email"
-              value={email}
-              isDisabled={isEmailOtpSent}
-              onChange={(val) => setEmail(val)}
-            />
-            <TextInput
-              label="Confirm Email ID *"
-              placeholder="Re-enter Email ID"
-              type="email"
-              value={confirmEmail}
-              isDisabled={isEmailOtpSent}
-              onChange={(val) => setConfirmEmail(val)}
-            />
-          </div>
+            {/* Right Column: Form */}
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-center md:justify-start">
+                  <Heading level={2} className="text-lg md:text-xl font-bold text-[#195992]">
+                    Step 2 : Verify Email ID
+                  </Heading>
+                </div>
+                <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
+              </div>
 
-          {!isEmailOtpSent ? (
-            <div className="space-y-4 pt-2">
-              <CanvasCaptcha
-                label="Security Captcha Verification *"
-                codeLength={5}
-                onVerify={(isValid) => {}}
-              />
-              <div className="flex justify-end">
-                <Button
-                  label="Send Email OTP"
-                  variant="primary"
-                  isDisabled={!email || email !== confirmEmail}
-                  onClick={() => setIsEmailOtpSent(true)}
-                >
-                  Get Email OTP Code
-                </Button>
+              {/* Email ID input with left icon */}
+              <div>
+                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
+                  Email ID : <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="9" r="3" />
+                      <path d="M7 18c0-3 10-3 10 0" />
+                    </svg>
+                  </span>
+                  <input
+                    type="email"
+                    placeholder="Enter Email ID"
+                    value={email}
+                    readOnly={isEmailOtpSent}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Confirm Email ID input with left icon */}
+              <div>
+                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
+                  Confirm Email ID : <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="9" r="3" />
+                      <path d="M7 18c0-3 10-3 10 0" />
+                    </svg>
+                  </span>
+                  <input
+                    type="email"
+                    placeholder="Re-enter Email ID"
+                    value={confirmEmail}
+                    readOnly={isEmailOtpSent}
+                    onChange={(e) => setConfirmEmail(e.target.value)}
+                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Captcha section before OTP sent */}
+              {!isEmailOtpSent && (
+                <div className="pt-1 space-y-3">
+                  <CanvasCaptcha
+                    label="CAPTCHA (as shown below) *"
+                    codeLength={5}
+                    onVerify={(isValid) => {}}
+                  />
+                </div>
+              )}
+
+              {/* OTP section when sent */}
+              {isEmailOtpSent && (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-4">
+                  <Text className="text-sm font-semibold text-emerald-900">
+                    ✓ 6-Digit Verification OTP sent to <b>{email}</b>
+                  </Text>
+                  <OtpInput
+                    length={6}
+                    value={emailOtp}
+                    onChange={(val) => setEmailOtp(val)}
+                    label="Enter 6-Digit Email OTP *"
+                  />
+                  <div className="flex items-center justify-between text-xs text-slate-600">
+                    <span>Resend OTP available in: <b>{emailTimer}s</b></span>
+                    <Button
+                      label="Resend OTP"
+                      variant="ghost"
+                      size="sm"
+                      isDisabled={emailTimer > 0}
+                      onClick={() => setEmailTimer(60)}
+                    >
+                      Resend Email OTP
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Yellow Declaration Box */}
+              {!isEmailOtpSent && (
+                <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
+                  <input
+                    id="emailOwnershipAccepted"
+                    type="checkbox"
+                    checked={emailOwnershipAccepted}
+                    onChange={(e) => setEmailOwnershipAccepted(e.target.checked)}
+                    className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+                  />
+                  <label htmlFor="emailOwnershipAccepted" className="cursor-pointer text-sm leading-snug text-[#333]">
+                    I declare that the above e-Mail is owned by me and I have not created any account using this e-Mail ID on this portal. <span className="text-red-600"> *</span>
+                  </label>
+                </div>
+              )}
+
+              {/* Centered Button */}
+              <div className="pt-3 flex items-center justify-center">
+                {!isEmailOtpSent ? (
+                  <button
+                    type="button"
+                    disabled={!email || email !== confirmEmail || !emailOwnershipAccepted}
+                    onClick={() => setIsEmailOtpSent(true)}
+                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
+                  >
+                    Get OTP
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={emailOtp.length < 6}
+                    onClick={() => setOtrStep(3)}
+                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
+                  >
+                    Verify Email &amp; Proceed
+                  </button>
+                )}
               </div>
             </div>
-          ) : (
-            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-4">
-              <Text className="text-sm font-semibold text-emerald-900">
-                ✓ 6-Digit Verification OTP sent to <b>{email}</b>
-              </Text>
-              <OtpInput
-                length={6}
-                value={emailOtp}
-                onChange={(val) => setEmailOtp(val)}
-                label="Enter 6-Digit Email OTP *"
-              />
-              <div className="flex items-center justify-between text-xs text-slate-600">
-                <span>Resend OTP available in: <b>{emailTimer}s</b></span>
-                <Button
-                  label="Resend OTP"
-                  variant="ghost"
-                  size="sm"
-                  isDisabled={emailTimer > 0}
-                  onClick={() => setEmailTimer(60)}
-                >
-                  Resend Email OTP
-                </Button>
-              </div>
-
-              <div className="flex justify-end pt-2 border-t border-emerald-200">
-                <Button
-                  label="Verify & Continue to Mobile Verification"
-                  variant="primary"
-                  isDisabled={emailOtp.length < 6}
-                  onClick={() => setOtrStep(3)}
-                >
-                  Verify Email & Proceed to Mobile Verification →
-                </Button>
-              </div>
-            </div>
-          )}
+          </div>
         </Card>
       )}
 
       {/* STEP 3: VERIFY MOBILE NUMBER */}
       {otrStep === 3 && (
-        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
-          <div className="border-b pb-3">
-            <Heading level={3} className="text-lg font-bold text-[#195992]">
-              Step 3 : Verify Mobile Number
-            </Heading>
-            <Text className="text-xs text-slate-500 mt-0.5">
-              Enter your 10-digit mobile number to receive and verify the SMS OTP code.
-            </Text>
-          </div>
+        <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-6 md:p-8 shadow-md">
+          <div className="grid gap-6 md:grid-cols-2 md:items-center">
+            {/* Left Column: Illustration */}
+            <RegistrationStepperIllustration step={3} />
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <TextInput
-              label="Mobile Number *"
-              placeholder="Enter 10-digit mobile number"
-              type="text"
-              value={mobile}
-              isDisabled={isMobileOtpSent}
-              onChange={(val) => setMobile(val)}
-            />
-            <TextInput
-              label="Confirm Mobile Number *"
-              placeholder="Re-enter 10-digit mobile number"
-              type="text"
-              value={confirmMobile}
-              isDisabled={isMobileOtpSent}
-              onChange={(val) => setConfirmMobile(val)}
-            />
-          </div>
+            {/* Right Column: Form */}
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-center md:justify-start">
+                  <Heading level={2} className="text-lg md:text-xl font-bold text-[#195992]">
+                    Step 3 : Verify Mobile Number
+                  </Heading>
+                </div>
+                <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
+              </div>
 
-          {!isMobileOtpSent ? (
-            <div className="space-y-4 pt-2">
-              <CanvasCaptcha
-                label="Security Captcha Verification *"
-                codeLength={5}
-                onVerify={(isValid) => {}}
-              />
-              <div className="flex justify-end">
-                <Button
-                  label="Send Mobile OTP"
-                  variant="primary"
-                  isDisabled={!mobile || mobile !== confirmMobile || mobile.length < 10}
-                  onClick={() => setIsMobileOtpSent(true)}
-                >
-                  Get SMS OTP Code
-                </Button>
+              {/* Mobile Number input with left phone icon */}
+              <div>
+                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
+                  Mobile Number : <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <rect x="7" y="2" width="10" height="20" rx="2" ry="2" />
+                      <line x1="11" y1="18" x2="13" y2="18" />
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Enter 10-digit Mobile Number"
+                    maxLength={10}
+                    value={mobile}
+                    readOnly={isMobileOtpSent}
+                    onChange={(e) => setMobile(e.target.value)}
+                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Confirm Mobile Number input with left phone icon */}
+              <div>
+                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
+                  Confirm Mobile Number : <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <rect x="7" y="2" width="10" height="20" rx="2" ry="2" />
+                      <line x1="11" y1="18" x2="13" y2="18" />
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Re-enter Mobile Number"
+                    maxLength={10}
+                    value={confirmMobile}
+                    readOnly={isMobileOtpSent}
+                    onChange={(e) => setConfirmMobile(e.target.value)}
+                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Captcha section before OTP sent */}
+              {!isMobileOtpSent && (
+                <div className="pt-1 space-y-3">
+                  <CanvasCaptcha
+                    label="CAPTCHA (as shown below) *"
+                    codeLength={5}
+                    onVerify={(isValid) => {}}
+                  />
+                </div>
+              )}
+
+              {/* OTP section when sent */}
+              {isMobileOtpSent && (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-4">
+                  <Text className="text-sm font-semibold text-emerald-900">
+                    ✓ 6-Digit Verification SMS OTP sent to <b>+91 {mobile}</b>
+                  </Text>
+                  <OtpInput
+                    length={6}
+                    value={mobileOtp}
+                    onChange={(val) => setMobileOtp(val)}
+                    label="Enter 6-Digit Mobile SMS OTP *"
+                  />
+                  <div className="flex items-center justify-between text-xs text-slate-600">
+                    <span>Resend OTP available in: <b>{mobileTimer}s</b></span>
+                    <Button
+                      label="Resend OTP"
+                      variant="ghost"
+                      size="sm"
+                      isDisabled={mobileTimer > 0}
+                      onClick={() => setMobileTimer(60)}
+                    >
+                      Resend SMS OTP
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Yellow Declaration Box */}
+              {!isMobileOtpSent && (
+                <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
+                  <input
+                    id="mobileOwnershipAccepted"
+                    type="checkbox"
+                    checked={mobileOwnershipAccepted}
+                    onChange={(e) => setMobileOwnershipAccepted(e.target.checked)}
+                    className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+                  />
+                  <label htmlFor="mobileOwnershipAccepted" className="cursor-pointer text-sm leading-snug text-[#333]">
+                    I declare that the above Mobile Number is owned by me and I have not created any account using this Mobile Number on this portal. <span className="text-red-600"> *</span>
+                  </label>
+                </div>
+              )}
+
+              {/* Centered Button */}
+              <div className="pt-3 flex items-center justify-center">
+                {!isMobileOtpSent ? (
+                  <button
+                    type="button"
+                    disabled={!mobile || mobile !== confirmMobile || mobile.length < 10 || !mobileOwnershipAccepted}
+                    onClick={() => setIsMobileOtpSent(true)}
+                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
+                  >
+                    Get OTP
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={mobileOtp.length < 6}
+                    onClick={() => setOtrStep(4)}
+                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
+                  >
+                    Verify Mobile &amp; Proceed
+                  </button>
+                )}
               </div>
             </div>
-          ) : (
-            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-4">
-              <Text className="text-sm font-semibold text-emerald-900">
-                ✓ 6-Digit Verification SMS OTP sent to <b>+91 {mobile}</b>
-              </Text>
-              <OtpInput
-                length={6}
-                value={mobileOtp}
-                onChange={(val) => setMobileOtp(val)}
-                label="Enter 6-Digit Mobile SMS OTP *"
-              />
-              <div className="flex items-center justify-between text-xs text-slate-600">
-                <span>Resend OTP available in: <b>{mobileTimer}s</b></span>
-                <Button
-                  label="Resend OTP"
-                  variant="ghost"
-                  size="sm"
-                  isDisabled={mobileTimer > 0}
-                  onClick={() => setMobileTimer(60)}
-                >
-                  Resend SMS OTP
-                </Button>
-              </div>
-
-              <div className="flex justify-end pt-2 border-t border-emerald-200">
-                <Button
-                  label="Verify & Continue to Create Password"
-                  variant="primary"
-                  isDisabled={mobileOtp.length < 6}
-                  onClick={() => setOtrStep(4)}
-                >
-                  Verify Mobile & Proceed to Create Password →
-                </Button>
-              </div>
-            </div>
-          )}
+          </div>
         </Card>
       )}
 
       {/* STEP 4: CREATE PASSWORD */}
       {otrStep === 4 && (
-        <Card className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-6">
-          <div className="border-b pb-3">
-            <Heading level={3} className="text-lg font-bold text-[#195992]">
-              Step 4 : Create Account Password
-            </Heading>
-            <Text className="text-xs text-slate-500 mt-0.5">
-              Set up a secure login password for your One-Time Registration (OTR) candidate account.
-            </Text>
-          </div>
+        <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-6 md:p-8 shadow-md">
+          <div className="grid gap-6 md:grid-cols-2 md:items-center">
+            {/* Left Column: Illustration */}
+            <RegistrationStepperIllustration step={4} />
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <TextInput
-              label="Create Password *"
-              placeholder="Enter strong password"
-              type="password"
-              value={password}
-              onChange={(val) => setPassword(val)}
-            />
-            <TextInput
-              label="Confirm Password *"
-              placeholder="Re-enter password"
-              type="password"
-              value={confirmPassword}
-              onChange={(val) => setConfirmPassword(val)}
-            />
-          </div>
+            {/* Right Column: Form */}
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-center md:justify-start">
+                  <Heading level={2} className="text-lg md:text-xl font-bold text-[#195992]">
+                    Step 4 : Create Account Password
+                  </Heading>
+                </div>
+                <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
+              </div>
 
-          {/* Password Requirements Checklist */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-700">
-            <Text className="font-semibold text-slate-900 text-sm">Password Security Guidelines:</Text>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
-              <span className={password.length >= 8 && password.length <= 16 ? "text-emerald-700 font-semibold" : "text-slate-600"}>
-                • 8 to 16 characters long
-              </span>
-              <span className={/[A-Z]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
-                • At least 1 uppercase letter (A-Z)
-              </span>
-              <span className={/[a-z]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
-                • At least 1 lowercase letter (a-z)
-              </span>
-              <span className={/[0-9]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
-                • At least 1 numeric digit (0-9)
-              </span>
-              <span className={/[!@#$%^&*()]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
-                • At least 1 special character (@, #, $, %)
-              </span>
+              {/* Password input with left lock icon */}
+              <div>
+                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
+                  Create Password : <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0110 0v4" />
+                    </svg>
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992]"
+                  />
+                </div>
+              </div>
+
+              {/* Confirm Password input with left lock icon */}
+              <div>
+                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
+                  Confirm Password : <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0110 0v4" />
+                    </svg>
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="Re-enter Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992]"
+                  />
+                </div>
+              </div>
+
+              {/* Password Requirements Checklist */}
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-700">
+                <Text className="font-semibold text-slate-900 text-sm">Password Security Guidelines:</Text>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                  <span className={password.length >= 8 && password.length <= 16 ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                    • 8 to 16 characters long
+                  </span>
+                  <span className={/[A-Z]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                    • At least 1 uppercase letter (A-Z)
+                  </span>
+                  <span className={/[a-z]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                    • At least 1 lowercase letter (a-z)
+                  </span>
+                  <span className={/[0-9]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                    • At least 1 numeric digit (0-9)
+                  </span>
+                  <span className={/[!@#$%^&*()]/.test(password) ? "text-emerald-700 font-semibold" : "text-slate-600"}>
+                    • At least 1 special character (@, #, $, %)
+                  </span>
+                </div>
+              </div>
+
+              {/* Yellow Declaration Box */}
+              <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
+                <input
+                  id="passwordAccepted"
+                  type="checkbox"
+                  checked={passwordAccepted}
+                  onChange={(e) => setPasswordAccepted(e.target.checked)}
+                  className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+                />
+                <label htmlFor="passwordAccepted" className="cursor-pointer text-sm leading-snug text-[#333]">
+                  I hereby declare that all the information provided above is true and correct to the best of my knowledge and I accept all terms. <span className="text-red-600"> *</span>
+                </label>
+              </div>
+
+              {/* Centered Button */}
+              <div className="pt-3 flex items-center justify-center">
+                <button
+                  type="button"
+                  disabled={!password || password !== confirmPassword || password.length < 8 || !passwordAccepted}
+                  onClick={() => {
+                    const generatedId = `OTR2026${Math.floor(100000 + Math.random() * 900000)}`;
+                    setOtrId(generatedId);
+                    setOtrStep(5);
+                  }}
+                  className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
+                >
+                  Submit &amp; Generate OTR ID
+                </button>
+              </div>
             </div>
-          </div>
-
-          <div className="flex items-start gap-2 pt-2">
-            <input
-              type="checkbox"
-              id="otrTerms"
-              checked={isTermsAccepted}
-              onChange={(e) => setIsTermsAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-[#195992] focus:ring-[#195992]"
-            />
-            <label htmlFor="otrTerms" className="text-xs text-slate-700 leading-normal cursor-pointer">
-              I declare that the Email ID (<b>{email || 'candidate@example.com'}</b>) and Mobile Number (<b>+91 {mobile || '9876543210'}</b>) provided above belong exclusively to me and I am creating my official candidate OTR account.
-            </label>
-          </div>
-
-          <div className="flex justify-end pt-4 border-t border-slate-200">
-            <Button
-              label="Complete Registration & Generate OTR ID"
-              variant="primary"
-              isDisabled={!password || password !== confirmPassword || !isTermsAccepted}
-              onClick={() => {
-                setOtrId(`OTR2026${Math.floor(100000 + Math.random() * 900000)}`);
-                setOtrStep(5);
-              }}
-            >
-              Complete Registration & Generate OTR ID →
-            </Button>
           </div>
         </Card>
       )}
 
-      {/* STEP 5: REGISTRATION COMPLETE & OTR GENERATED */}
+      {/* STEP 5: OTR ACCOUNT CREATED SUCCESS */}
       {otrStep === 5 && (
-        <Card className="bg-white border border-emerald-300 rounded-2xl p-8 shadow-sm text-center space-y-6">
-          <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+        <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-8 shadow-md text-center space-y-6 max-w-2xl mx-auto">
+          <div className="mx-auto w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl font-bold">
             ✓
           </div>
-          <div>
+
+          <div className="space-y-2">
             <Heading level={2} className="text-2xl font-bold text-slate-900">
-              One-Time Registration (OTR) Account Created!
+              One-Time Registration (OTR) Account Created Successfully!
             </Heading>
-            <Text className="text-sm text-slate-600 mt-1">
-              Your candidate OTR profile has been successfully verified and generated.
+            <Text className="text-slate-600 text-sm">
+              Your credentials and OTR Profile Reference ID have been generated. You can now log in and complete your Universal Registration Scheme application.
             </Text>
           </div>
 
-          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl inline-block px-8">
-            <Text className="text-xs uppercase tracking-wider text-emerald-800 font-bold">Your Generated OTR Reference ID</Text>
-            <Text className="text-3xl font-extrabold text-[#195992] tracking-widest mt-1">
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 inline-block w-full">
+            <Text className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Your Candidate OTR Reference ID</Text>
+            <div className="text-3xl font-extrabold text-[#195992] tracking-wider font-mono">
               {otrId || 'OTR2026987452'}
-            </Text>
-          </div>
-
-          <div className="max-w-md mx-auto text-left p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-2 text-slate-700">
-            <div className="flex justify-between">
-              <span>Verified Email ID:</span>
-              <span className="font-semibold text-slate-900">{email || 'candidate@example.com'}</span>
-            </div>
-            <div className="flex justify-between">
               <span>Verified Mobile Number:</span>
               <span className="font-semibold text-slate-900">+91 {mobile || '9876543210'}</span>
             </div>
