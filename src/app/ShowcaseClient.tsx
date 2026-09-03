@@ -32,6 +32,7 @@ import {
   Text,
   Heading,
   Divider,
+  CheckboxInput,
 } from '@astryxdesign/core';
 
 // Helper Icons for Wizard Sidebar
@@ -231,32 +232,24 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
             </ol>
           </div>
 
-          {/* Yellow Declaration Box */}
-          <div className="mt-6">
-            <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
-              <input
-                id="step1Terms"
-                type="checkbox"
-                checked={step1Accepted}
-                onChange={(e) => setStep1Accepted(e.target.checked)}
-                className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
-              />
-              <label htmlFor="step1Terms" className="cursor-pointer text-sm leading-snug text-[#333]">
-                I hereby declare that I have read and understood the above Instructions carefully and I accept all the terms and conditions mentioned hereinabove. <span className="text-red-600"> *</span>
-              </label>
-            </div>
+          {/* Yellow Declaration Box using Astryx CheckboxInput */}
+          <div className="mt-6 p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
+            <CheckboxInput
+              label="I hereby declare that I have read and understood the above Instructions carefully and I accept all the terms and conditions mentioned hereinabove. *"
+              value={step1Accepted}
+              onChange={(checked) => setStep1Accepted(checked)}
+              isRequired
+            />
           </div>
 
-          {/* Centered Submit Button */}
+          {/* Centered Astryx Button */}
           <div className="pt-4 flex items-center justify-center">
-            <button
-              type="button"
-              disabled={!step1Accepted}
+            <Button
+              label="Proceed for Account Creation"
+              variant="primary"
+              isDisabled={!step1Accepted}
               onClick={() => setOtrStep(2)}
-              className="rounded-full bg-[#195992] px-16 py-3.5 text-sm font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
-            >
-              Proceed for Account Creation
-            </button>
+            />
           </div>
         </Card>
       )}
@@ -279,53 +272,39 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                 <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
               </div>
 
-              {/* Email ID input with left icon */}
-              <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
-                  Email ID : <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="9" r="3" />
-                      <path d="M7 18c0-3 10-3 10 0" />
-                    </svg>
-                  </span>
-                  <input
-                    type="email"
-                    placeholder="Enter Email ID"
-                    value={email}
-                    readOnly={isEmailOtpSent}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              {/* Email ID Astryx TextInput */}
+              <TextInput
+                label="Email ID *"
+                type="email"
+                placeholder="Enter Email ID"
+                value={email}
+                isReadOnly={isEmailOtpSent}
+                onChange={(val) => setEmail(val)}
+                startIcon={
+                  <svg className="h-5 w-5 text-[#195992]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="9" r="3" />
+                    <path d="M7 18c0-3 10-3 10 0" />
+                  </svg>
+                }
+              />
 
-              {/* Confirm Email ID input with left icon */}
-              <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
-                  Confirm Email ID : <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="9" r="3" />
-                      <path d="M7 18c0-3 10-3 10 0" />
-                    </svg>
-                  </span>
-                  <input
-                    type="email"
-                    placeholder="Re-enter Email ID"
-                    value={confirmEmail}
-                    readOnly={isEmailOtpSent}
-                    onChange={(e) => setConfirmEmail(e.target.value)}
-                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              {/* Confirm Email ID Astryx TextInput */}
+              <TextInput
+                label="Confirm Email ID *"
+                type="email"
+                placeholder="Re-enter Email ID"
+                value={confirmEmail}
+                isReadOnly={isEmailOtpSent}
+                onChange={(val) => setConfirmEmail(val)}
+                startIcon={
+                  <svg className="h-5 w-5 text-[#195992]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="9" r="3" />
+                    <path d="M7 18c0-3 10-3 10 0" />
+                  </svg>
+                }
+              />
 
               {/* Captcha section before OTP sent */}
               {!isEmailOtpSent && (
@@ -353,54 +332,44 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                   <div className="flex items-center justify-between text-xs text-slate-600">
                     <span>Resend OTP available in: <b>{emailTimer}s</b></span>
                     <Button
-                      label="Resend OTP"
+                      label="Resend Email OTP"
                       variant="ghost"
                       size="sm"
                       isDisabled={emailTimer > 0}
                       onClick={() => setEmailTimer(60)}
-                    >
-                      Resend Email OTP
-                    </Button>
+                    />
                   </div>
                 </div>
               )}
 
-              {/* Yellow Declaration Box */}
+              {/* Yellow Declaration Box using Astryx CheckboxInput */}
               {!isEmailOtpSent && (
-                <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
-                  <input
-                    id="emailOwnershipAccepted"
-                    type="checkbox"
-                    checked={emailOwnershipAccepted}
-                    onChange={(e) => setEmailOwnershipAccepted(e.target.checked)}
-                    className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+                <div className="p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
+                  <CheckboxInput
+                    label="I declare that the above e-Mail is owned by me and I have not created any account using this e-Mail ID on this portal. *"
+                    value={emailOwnershipAccepted}
+                    onChange={(checked) => setEmailOwnershipAccepted(checked)}
+                    isRequired
                   />
-                  <label htmlFor="emailOwnershipAccepted" className="cursor-pointer text-sm leading-snug text-[#333]">
-                    I declare that the above e-Mail is owned by me and I have not created any account using this e-Mail ID on this portal. <span className="text-red-600"> *</span>
-                  </label>
                 </div>
               )}
 
-              {/* Centered Button */}
+              {/* Centered Astryx Button */}
               <div className="pt-3 flex items-center justify-center">
                 {!isEmailOtpSent ? (
-                  <button
-                    type="button"
-                    disabled={!email || email !== confirmEmail || !emailOwnershipAccepted}
+                  <Button
+                    label="Get OTP"
+                    variant="primary"
+                    isDisabled={!email || email !== confirmEmail || !emailOwnershipAccepted}
                     onClick={() => setIsEmailOtpSent(true)}
-                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
-                  >
-                    Get OTP
-                  </button>
+                  />
                 ) : (
-                  <button
-                    type="button"
-                    disabled={emailOtp.length < 6}
+                  <Button
+                    label="Verify Email & Proceed"
+                    variant="primary"
+                    isDisabled={emailOtp.length < 6}
                     onClick={() => setOtrStep(3)}
-                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
-                  >
-                    Verify Email &amp; Proceed
-                  </button>
+                  />
                 )}
               </div>
             </div>
@@ -426,53 +395,35 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                 <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
               </div>
 
-              {/* Mobile Number input with left phone icon */}
-              <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
-                  Mobile Number : <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <rect x="7" y="2" width="10" height="20" rx="2" ry="2" />
-                      <line x1="11" y1="18" x2="13" y2="18" />
-                    </svg>
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Enter 10-digit Mobile Number"
-                    maxLength={10}
-                    value={mobile}
-                    readOnly={isMobileOtpSent}
-                    onChange={(e) => setMobile(e.target.value)}
-                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              {/* Mobile Number Astryx TextInput */}
+              <TextInput
+                label="Mobile Number *"
+                placeholder="Enter 10-digit Mobile Number"
+                value={mobile}
+                isReadOnly={isMobileOtpSent}
+                onChange={(val) => setMobile(val)}
+                startIcon={
+                  <svg className="h-5 w-5 text-[#195992]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <rect x="7" y="2" width="10" height="20" rx="2" ry="2" />
+                    <line x1="11" y1="18" x2="13" y2="18" />
+                  </svg>
+                }
+              />
 
-              {/* Confirm Mobile Number input with left phone icon */}
-              <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
-                  Confirm Mobile Number : <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <rect x="7" y="2" width="10" height="20" rx="2" ry="2" />
-                      <line x1="11" y1="18" x2="13" y2="18" />
-                    </svg>
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Re-enter Mobile Number"
-                    maxLength={10}
-                    value={confirmMobile}
-                    readOnly={isMobileOtpSent}
-                    onChange={(e) => setConfirmMobile(e.target.value)}
-                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992] read-only:bg-slate-100 read-only:text-slate-600 read-only:cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              {/* Confirm Mobile Number Astryx TextInput */}
+              <TextInput
+                label="Confirm Mobile Number *"
+                placeholder="Re-enter Mobile Number"
+                value={confirmMobile}
+                isReadOnly={isMobileOtpSent}
+                onChange={(val) => setConfirmMobile(val)}
+                startIcon={
+                  <svg className="h-5 w-5 text-[#195992]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <rect x="7" y="2" width="10" height="20" rx="2" ry="2" />
+                    <line x1="11" y1="18" x2="13" y2="18" />
+                  </svg>
+                }
+              />
 
               {/* Captcha section before OTP sent */}
               {!isMobileOtpSent && (
@@ -500,54 +451,44 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                   <div className="flex items-center justify-between text-xs text-slate-600">
                     <span>Resend OTP available in: <b>{mobileTimer}s</b></span>
                     <Button
-                      label="Resend OTP"
+                      label="Resend SMS OTP"
                       variant="ghost"
                       size="sm"
                       isDisabled={mobileTimer > 0}
                       onClick={() => setMobileTimer(60)}
-                    >
-                      Resend SMS OTP
-                    </Button>
+                    />
                   </div>
                 </div>
               )}
 
-              {/* Yellow Declaration Box */}
+              {/* Yellow Declaration Box using Astryx CheckboxInput */}
               {!isMobileOtpSent && (
-                <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
-                  <input
-                    id="mobileOwnershipAccepted"
-                    type="checkbox"
-                    checked={mobileOwnershipAccepted}
-                    onChange={(e) => setMobileOwnershipAccepted(e.target.checked)}
-                    className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+                <div className="p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
+                  <CheckboxInput
+                    label="I declare that the above Mobile Number is owned by me and I have not created any account using this Mobile Number on this portal. *"
+                    value={mobileOwnershipAccepted}
+                    onChange={(checked) => setMobileOwnershipAccepted(checked)}
+                    isRequired
                   />
-                  <label htmlFor="mobileOwnershipAccepted" className="cursor-pointer text-sm leading-snug text-[#333]">
-                    I declare that the above Mobile Number is owned by me and I have not created any account using this Mobile Number on this portal. <span className="text-red-600"> *</span>
-                  </label>
                 </div>
               )}
 
-              {/* Centered Button */}
+              {/* Centered Astryx Button */}
               <div className="pt-3 flex items-center justify-center">
                 {!isMobileOtpSent ? (
-                  <button
-                    type="button"
-                    disabled={!mobile || mobile !== confirmMobile || mobile.length < 10 || !mobileOwnershipAccepted}
+                  <Button
+                    label="Get OTP"
+                    variant="primary"
+                    isDisabled={!mobile || mobile !== confirmMobile || mobile.length < 10 || !mobileOwnershipAccepted}
                     onClick={() => setIsMobileOtpSent(true)}
-                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
-                  >
-                    Get OTP
-                  </button>
+                  />
                 ) : (
-                  <button
-                    type="button"
-                    disabled={mobileOtp.length < 6}
+                  <Button
+                    label="Verify Mobile & Proceed"
+                    variant="primary"
+                    isDisabled={mobileOtp.length < 6}
                     onClick={() => setOtrStep(4)}
-                    className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
-                  >
-                    Verify Mobile &amp; Proceed
-                  </button>
+                  />
                 )}
               </div>
             </div>
@@ -573,49 +514,35 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                 <div className="mt-2 h-[2px] w-full bg-[#9aadc5]" />
               </div>
 
-              {/* Password input with left lock icon */}
-              <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
-                  Create Password : <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0110 0v4" />
-                    </svg>
-                  </span>
-                  <input
-                    type="password"
-                    placeholder="Enter Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992]"
-                  />
-                </div>
-              </div>
+              {/* Password Astryx TextInput */}
+              <TextInput
+                label="Create Password *"
+                type="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(val) => setPassword(val)}
+                startIcon={
+                  <svg className="h-5 w-5 text-[#195992]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0110 0v4" />
+                  </svg>
+                }
+              />
 
-              {/* Confirm Password input with left lock icon */}
-              <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-[#195992]">
-                  Confirm Password : <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#195992]">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0110 0v4" />
-                    </svg>
-                  </span>
-                  <input
-                    type="password"
-                    placeholder="Re-enter Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-xl h-12 border border-[#cfd8e6] pl-10 pr-3 py-2 text-sm focus:border-[#195992] focus:outline-none focus:ring-1 focus:ring-[#195992]"
-                  />
-                </div>
-              </div>
+              {/* Confirm Password Astryx TextInput */}
+              <TextInput
+                label="Confirm Password *"
+                type="password"
+                placeholder="Re-enter Password"
+                value={confirmPassword}
+                onChange={(val) => setConfirmPassword(val)}
+                startIcon={
+                  <svg className="h-5 w-5 text-[#195992]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0110 0v4" />
+                  </svg>
+                }
+              />
 
               {/* Password Requirements Checklist */}
               <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-700">
@@ -639,36 +566,66 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                 </div>
               </div>
 
-              {/* Yellow Declaration Box */}
-              <div className="flex items-start gap-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] w-full px-4 py-3 transition-colors duration-150 hover:border-[#f0a500] hover:bg-[#fff3cc]">
-                <input
-                  id="passwordAccepted"
-                  type="checkbox"
-                  checked={passwordAccepted}
-                  onChange={(e) => setPasswordAccepted(e.target.checked)}
-                  className="mt-0.5 h-5 w-5 rounded border-slate-400 accent-[#2e7d32] cursor-pointer"
+              {/* Yellow Declaration Box using Astryx CheckboxInput */}
+              <div className="p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
+                <CheckboxInput
+                  label="I hereby declare that all the information provided above is true and correct to the best of my knowledge and I accept all terms. *"
+                  value={passwordAccepted}
+                  onChange={(checked) => setPasswordAccepted(checked)}
+                  isRequired
                 />
-                <label htmlFor="passwordAccepted" className="cursor-pointer text-sm leading-snug text-[#333]">
-                  I hereby declare that all the information provided above is true and correct to the best of my knowledge and I accept all terms. <span className="text-red-600"> *</span>
-                </label>
               </div>
 
-              {/* Centered Button */}
+              {/* Centered Astryx Button */}
               <div className="pt-3 flex items-center justify-center">
-                <button
-                  type="button"
-                  disabled={!password || password !== confirmPassword || password.length < 8 || !passwordAccepted}
+                <Button
+                  label="Submit & Generate OTR ID"
+                  variant="primary"
+                  isDisabled={!password || password !== confirmPassword || password.length < 8 || !passwordAccepted}
                   onClick={() => {
                     const generatedId = `OTR2026${Math.floor(100000 + Math.random() * 900000)}`;
                     setOtrId(generatedId);
                     setOtrStep(5);
                   }}
-                  className="w-full max-w-xs rounded-full bg-[#195992] py-3.5 text-base font-semibold text-white hover:bg-[#15457a] disabled:opacity-60 transition-all shadow-sm cursor-pointer"
-                >
-                  Submit &amp; Generate OTR ID
-                </button>
+                />
               </div>
             </div>
+          </div>
+        </Card>
+      )}
+
+      {/* STEP 5: OTR ACCOUNT CREATED SUCCESS */}
+      {otrStep === 5 && (
+        <Card className="bg-white border border-[#d9e2f2] rounded-2xl p-8 shadow-md text-center space-y-6 max-w-2xl mx-auto">
+          <div className="mx-auto w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl font-bold">
+            ✓
+          </div>
+
+          <div className="space-y-2">
+            <Heading level={2} className="text-2xl font-bold text-slate-900">
+              One-Time Registration (OTR) Account Created Successfully!
+            </Heading>
+            <Text className="text-slate-600 text-sm">
+              Your credentials and OTR Profile Reference ID have been generated. You can now log in and complete your Universal Registration Scheme application.
+            </Text>
+          </div>
+
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 inline-block w-full">
+            <Text className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Your Candidate OTR Reference ID</Text>
+            <div className="text-3xl font-extrabold text-[#195992] tracking-wider font-mono">
+              {otrId || 'OTR2026987452'}
+            </div>
+            <Text className="text-xs text-slate-500 pt-1">
+              (Save this OTR Reference ID for future logins and application tracking)
+            </Text>
+          </div>
+
+          <div className="pt-2 flex justify-center">
+            <Button
+              label="Proceed to Universal Registration Wizard →"
+              variant="primary"
+              onClick={onProceedToRegistration}
+            />
           </div>
         </Card>
       )}
@@ -926,26 +883,16 @@ export default function ShowcaseClient() {
 
                 {/* Login Tab Selector Buttons */}
                 <div className="flex gap-2 border-b pb-4">
-                  <button
+                  <Button
+                    label="Mobile OTP Login"
+                    variant={loginTab === 'mobile' ? 'primary' : 'ghost'}
                     onClick={() => setLoginTab('mobile')}
-                    className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${
-                      loginTab === 'mobile'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300'
-                    }`}
-                  >
-                    Mobile OTP Login
-                  </button>
-                  <button
+                  />
+                  <Button
+                    label="Email OTP Login"
+                    variant={loginTab === 'email' ? 'primary' : 'ghost'}
                     onClick={() => setLoginTab('email')}
-                    className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${
-                      loginTab === 'email'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300'
-                    }`}
-                  >
-                    Email OTP Login
-                  </button>
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1299,33 +1246,16 @@ export default function ShowcaseClient() {
                 </div>
 
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-800 mb-2">
-                      Do you possess Aadhaar Number / Virtual ID (VID)? <span className="text-red-600">*</span>
-                    </label>
-                    <div className="flex gap-6 items-center">
-                      <label className="flex items-center gap-2 cursor-pointer font-medium text-sm text-slate-800">
-                        <input
-                          type="radio"
-                          name="hasAadhaar"
-                          checked={hasAadhaar === 'true'}
-                          onChange={() => setHasAadhaar('true')}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        Yes, I have Aadhaar
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer font-medium text-sm text-slate-800">
-                        <input
-                          type="radio"
-                          name="hasAadhaar"
-                          checked={hasAadhaar === 'false'}
-                          onChange={() => setHasAadhaar('false')}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        No Aadhaar / Use Other Photo ID
-                      </label>
-                    </div>
-                  </div>
+                  <RadioList
+                    label="Do you possess Aadhaar Number / Virtual ID (VID)? *"
+                    value={hasAadhaar}
+                    onChange={(val) => setHasAadhaar(val as 'true' | 'false')}
+                    orientation="horizontal"
+                    isRequired
+                  >
+                    <RadioListItem label="Yes, I have Aadhaar" value="true" />
+                    <RadioListItem label="No Aadhaar / Use Other Photo ID" value="false" />
+                  </RadioList>
 
                   {hasAadhaar === 'true' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
@@ -1530,26 +1460,18 @@ export default function ShowcaseClient() {
 
                 <div className="flex gap-4 items-center border p-3.5 rounded-lg bg-slate-50 border-slate-300">
                   <Text className="font-semibold text-sm text-slate-800">Grading System:</Text>
-                  <button
+                  <Button
+                    label="Marks Percentage (%)"
+                    variant={gradingType === 'marks' ? 'primary' : 'ghost'}
+                    size="sm"
                     onClick={() => setGradingType('marks')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                      gradingType === 'marks'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
-                    }`}
-                  >
-                    Marks Percentage (%)
-                  </button>
-                  <button
+                  />
+                  <Button
+                    label="CGPA Grade Points"
+                    variant={gradingType === 'cgpa' ? 'primary' : 'ghost'}
+                    size="sm"
                     onClick={() => setGradingType('cgpa')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                      gradingType === 'cgpa'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
-                    }`}
-                  >
-                    CGPA Grade Points
-                  </button>
+                  />
                 </div>
 
                 <div>
@@ -1585,13 +1507,12 @@ export default function ShowcaseClient() {
                     extraActionsSlot={
                       <div className="flex flex-col items-center gap-2 mt-3 pt-2">
                         <span className="text-xs font-bold text-red-600 font-mono">'OR'</span>
-                        <button
-                          type="button"
+                        <Button
+                          label="Fetch 10th Certificate from DigiLocker"
+                          variant="secondary"
+                          size="sm"
                           onClick={() => alert('Fetching 10th Certificate from DigiLocker...')}
-                          className="px-5 py-2 bg-[#2b66b1] hover:bg-[#1e4e8c] text-white rounded-full text-xs font-semibold shadow-sm transition-all flex items-center gap-2"
-                        >
-                          <span className="text-sm">🔒</span> Fetch 10th Class/ Matriculation/ Equivalent Board Certificate from DigiLocker
-                        </button>
+                        />
                       </div>
                     }
                     onFileSelect={(file) => {
