@@ -211,7 +211,9 @@ export function CardFileUploader({
       : undefined);
 
   const handleChooseFileClick = useCallback(() => {
-    if (disabled || isUploading) {return;}
+    if (disabled || isUploading) {
+      return;
+    }
     if (inputRef.current) {
       inputRef.current.click();
     }
@@ -220,7 +222,9 @@ export function CardFileUploader({
   // Validation Logic
   const validateFile = useCallback(
     (file: File): string | null => {
-      if (!file) {return null;}
+      if (!file) {
+        return null;
+      }
 
       // 1. Extension Check
       if (allowedExtensions && allowedExtensions.length > 0) {
@@ -262,7 +266,9 @@ export function CardFileUploader({
       // 4. Custom Validator
       if (onValidate) {
         const customErr = onValidate(file);
-        if (customErr) {return customErr;}
+        if (customErr) {
+          return customErr;
+        }
       }
 
       return null;
@@ -280,7 +286,9 @@ export function CardFileUploader({
           setValidationError(err);
           onValidationError?.(err);
           onFileSelect?.(null);
-          if (inputRef.current) {inputRef.current.value = '';}
+          if (inputRef.current) {
+            inputRef.current.value = '';
+          }
           return;
         }
       }
@@ -292,7 +300,9 @@ export function CardFileUploader({
   );
 
   const handlePreviewClick = useCallback(() => {
-    if (!isUploaded) {return;}
+    if (!isUploaded) {
+      return;
+    }
     if (onPreview) {
       onPreview();
       return;
@@ -570,6 +580,9 @@ export function CardFileUploader({
                 id={`${id}-upload-button`}
                 data-testid={`${id}-upload-button`}
                 type="button"
+                className={
+                  uploadButtonBorderRadius === '9999px' ? 'rounded-full' : ''
+                }
                 aria-disabled={isBtnDisabled}
                 onClick={isBtnDisabled ? undefined : onUpload}
                 onMouseEnter={() => setIsHoveredUpload(true)}
