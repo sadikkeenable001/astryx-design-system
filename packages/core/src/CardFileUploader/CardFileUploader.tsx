@@ -17,6 +17,29 @@ import {
 } from 'react';
 import {Spinner} from '../Spinner';
 
+// Predefined Border Radius Size Tokens
+export type CardUploaderRadius =
+  'none' | 'sm' | 'md' | 'lg' | 'xl' | 'pill' | 'full' | (string & {});
+
+const RADIUS_MAP: Record<string, string> = {
+  none: '0px',
+  sm: '4px',
+  md: '6px',
+  lg: '8px',
+  xl: '12px',
+  pill: '9999px',
+  full: '9999px',
+};
+
+function resolveRadius(
+  radius?: CardUploaderRadius,
+  defaultVal: string = '9999px',
+): string {
+  if (!radius) {return defaultVal;}
+  const key = radius.toString().toLowerCase();
+  return RADIUS_MAP[key] || radius;
+}
+
 // Default document placeholder SVG
 const CertificatePlaceholderIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -111,23 +134,22 @@ export interface CardFileUploaderProps {
   // Customization Color & Radius Props
   cardBgColor?: string;
   cardBorderColor?: string;
-  cardBorderRadius?: string;
+  cardBorderRadius?: CardUploaderRadius;
   noteBgColor?: string;
   noteBorderColor?: string;
   noteTextColor?: string;
-  noteBorderRadius?: string;
+  noteBorderRadius?: CardUploaderRadius;
   uploadButtonBgColor?: string;
   uploadButtonTextColor?: string;
   uploadButtonHoverBgColor?: string;
-  uploadButtonDisabledBgColor?: string;
-  uploadButtonBorderRadius?: string;
+  uploadButtonBorderRadius?: CardUploaderRadius;
   guidelinesTextColor?: string;
   guidelinesIconColor?: string;
   previewCardBgColor?: string;
   previewCardBorderColor?: string;
   previewCardUploadedBgColor?: string;
   previewCardTextColor?: string;
-  previewCardBorderRadius?: string;
+  previewCardBorderRadius?: CardUploaderRadius;
 
   // Slot for extra actions (e.g. DigiLocker button slot)
   extraActionsSlot?: ReactNode;
@@ -171,23 +193,22 @@ export function CardFileUploader({
   // Customization Radius & Colors (matching urn-keycloak primary blue)
   cardBgColor = '#ffffff',
   cardBorderColor = '#e2e8f0',
-  cardBorderRadius = '8px',
+  cardBorderRadius = 'lg',
   noteBgColor = '#fff7ed',
   noteBorderColor = '#fb923c',
   noteTextColor = '#c2410c',
-  noteBorderRadius = '10px',
+  noteBorderRadius = 'xl',
   uploadButtonBgColor = '#2b66b1',
   uploadButtonTextColor = '#ffffff',
   uploadButtonHoverBgColor = '#1e4e8c',
-  uploadButtonDisabledBgColor = '#2b66b1',
-  uploadButtonBorderRadius = '9999px',
+  uploadButtonBorderRadius = 'pill',
   guidelinesTextColor = '#2b66b1',
   guidelinesIconColor = '#2b66b1',
   previewCardBgColor = '#f8fafc',
   previewCardBorderColor = '#cbd5e1',
   previewCardUploadedBgColor = '#f1f5f9',
   previewCardTextColor = '#174b82',
-  previewCardBorderRadius = '8px',
+  previewCardBorderRadius = 'lg',
 
   extraActionsSlot,
 
@@ -203,6 +224,18 @@ export function CardFileUploader({
   const [validationError, setValidationError] = useState<string>('');
   const [isHoveredUpload, setIsHoveredUpload] = useState<boolean>(false);
 
+  // Resolve radius values from token preset ('sm', 'md', 'lg', 'xl', 'pill') or custom string
+  const resolvedCardRadius = resolveRadius(cardBorderRadius, '8px');
+  const resolvedNoteRadius = resolveRadius(noteBorderRadius, '10px');
+  const resolvedPreviewCardRadius = resolveRadius(
+    previewCardBorderRadius,
+    '8px',
+  );
+  const resolvedUploadBtnRadius = resolveRadius(
+    uploadButtonBorderRadius,
+    '9999px',
+  );
+
   // Derive accept string if allowedExtensions is provided
   const computedAccept =
     accept ||
@@ -211,9 +244,7 @@ export function CardFileUploader({
       : undefined);
 
   const handleChooseFileClick = useCallback(() => {
-    if (disabled || isUploading) {
-      return;
-    }
+    if (disabled || isUploading) {return;}
     if (inputRef.current) {
       inputRef.current.click();
     }
@@ -222,9 +253,7 @@ export function CardFileUploader({
   // Validation Logic
   const validateFile = useCallback(
     (file: File): string | null => {
-      if (!file) {
-        return null;
-      }
+      if (!file) {return null;}
 
       // 1. Extension Check
       if (allowedExtensions && allowedExtensions.length > 0) {
@@ -266,9 +295,7 @@ export function CardFileUploader({
       // 4. Custom Validator
       if (onValidate) {
         const customErr = onValidate(file);
-        if (customErr) {
-          return customErr;
-        }
+        if (customErr) {return customErr;}
       }
 
       return null;
@@ -286,9 +313,7 @@ export function CardFileUploader({
           setValidationError(err);
           onValidationError?.(err);
           onFileSelect?.(null);
-          if (inputRef.current) {
-            inputRef.current.value = '';
-          }
+          if (inputRef.current) {inputRef.current.value = '';}
           return;
         }
       }
@@ -300,9 +325,7 @@ export function CardFileUploader({
   );
 
   const handlePreviewClick = useCallback(() => {
-    if (!isUploaded) {
-      return;
-    }
+    if (!isUploaded) {return;}
     if (onPreview) {
       onPreview();
       return;
@@ -341,13 +364,19 @@ export function CardFileUploader({
     !fileName ||
     Boolean(effectiveErrorMessage);
 
+  // Active hover background color calculation
+  const currentUploadBtnBg =
+    isHoveredUpload && !isBtnDisabled
+      ? uploadButtonHoverBgColor
+      : uploadButtonBgColor;
+
   return (
     <div
       id={id}
       data-testid={id}
       className={`rounded-lg border p-5 shadow-sm ${className}`}
       style={{
-        borderRadius: cardBorderRadius,
+        borderRadius: resolvedCardRadius,
         border: `1px solid ${cardBorderColor}`,
         backgroundColor: cardBgColor,
         padding: '20px',
@@ -393,7 +422,7 @@ export function CardFileUploader({
             width: '160px',
             height: '140px',
             flexShrink: 0,
-            borderRadius: previewCardBorderRadius,
+            borderRadius: resolvedPreviewCardRadius,
             border: `1px solid ${previewCardBorderColor}`,
             display: 'flex',
             flexDirection: 'column',
@@ -434,7 +463,7 @@ export function CardFileUploader({
             style={{
               marginBottom: '12px',
               width: '100%',
-              borderRadius: noteBorderRadius,
+              borderRadius: resolvedNoteRadius,
               border: `1px solid ${noteBorderColor}`,
               backgroundColor: noteBgColor,
               padding: '10px 14px',
@@ -581,16 +610,16 @@ export function CardFileUploader({
                 data-testid={`${id}-upload-button`}
                 type="button"
                 className={
-                  uploadButtonBorderRadius === '9999px' ? 'rounded-full' : ''
+                  resolvedUploadBtnRadius === '9999px' ? 'rounded-full' : ''
                 }
                 aria-disabled={isBtnDisabled}
                 onClick={isBtnDisabled ? undefined : onUpload}
                 onMouseEnter={() => setIsHoveredUpload(true)}
                 onMouseLeave={() => setIsHoveredUpload(false)}
                 style={{
-                  borderRadius: uploadButtonBorderRadius,
+                  borderRadius: resolvedUploadBtnRadius,
                   border: 'none',
-                  backgroundColor: uploadButtonBgColor,
+                  backgroundColor: currentUploadBtnBg,
                   color: uploadButtonTextColor,
                   padding: '9px 24px',
                   fontSize: '14px',
