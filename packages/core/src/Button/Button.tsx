@@ -220,6 +220,27 @@ const variants = stylex.create({
     // width, style and offset come from the shared outline.
     outlineColor: {default: null, ':focus-visible': colorVars['--color-error']},
   },
+  outline: {
+    backgroundColor: 'transparent',
+    color: colorVars['--color-accent'],
+    borderWidth: borderVars['--border-width'],
+    borderStyle: 'solid',
+    borderColor: colorVars['--color-accent'],
+  },
+  table: {
+    backgroundColor: colorVars['--color-accent'],
+    color: colorVars['--color-on-accent'],
+    fontSize: typeScaleVars['--text-supporting-size'],
+    paddingBlock: spacingVars['--spacing-1'],
+    paddingInline: spacingVars['--spacing-2'],
+  },
+  stepCard: {
+    backgroundColor: colorVars['--color-background-card'],
+    color: colorVars['--color-text-primary'],
+    borderWidth: borderVars['--border-width'],
+    borderStyle: 'solid',
+    borderColor: colorVars['--color-border'],
+  },
 });
 
 /**

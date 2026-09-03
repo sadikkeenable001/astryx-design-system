@@ -29,6 +29,9 @@ export interface ButtonVariantMap {
   secondary: true;
   ghost: true;
   destructive: true;
+  outline: true;
+  table: true;
+  stepCard: true;
 }
 
 export {Button} from './Button';
