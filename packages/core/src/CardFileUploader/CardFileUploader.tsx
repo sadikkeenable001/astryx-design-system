@@ -108,22 +108,26 @@ export interface CardFileUploaderProps {
   onValidate?: (file: File) => string | null;
   onValidationError?: (error: string) => void;
 
-  // Customization Color Props
+  // Customization Color & Radius Props
   cardBgColor?: string;
   cardBorderColor?: string;
+  cardBorderRadius?: string;
   noteBgColor?: string;
   noteBorderColor?: string;
   noteTextColor?: string;
+  noteBorderRadius?: string;
   uploadButtonBgColor?: string;
   uploadButtonTextColor?: string;
   uploadButtonHoverBgColor?: string;
   uploadButtonDisabledBgColor?: string;
+  uploadButtonBorderRadius?: string;
   guidelinesTextColor?: string;
   guidelinesIconColor?: string;
   previewCardBgColor?: string;
   previewCardBorderColor?: string;
   previewCardUploadedBgColor?: string;
   previewCardTextColor?: string;
+  previewCardBorderRadius?: string;
 
   // Slot for extra actions (e.g. DigiLocker button slot)
   extraActionsSlot?: ReactNode;
@@ -164,22 +168,26 @@ export function CardFileUploader({
   onValidate,
   onValidationError,
 
-  // Customization Colors (matching urn-keycloak primary blue)
+  // Customization Radius & Colors (matching urn-keycloak primary blue)
   cardBgColor = '#ffffff',
   cardBorderColor = '#e2e8f0',
+  cardBorderRadius = '8px',
   noteBgColor = '#fff7ed',
   noteBorderColor = '#fb923c',
   noteTextColor = '#c2410c',
+  noteBorderRadius = '10px',
   uploadButtonBgColor = '#2b66b1',
   uploadButtonTextColor = '#ffffff',
   uploadButtonHoverBgColor = '#1e4e8c',
   uploadButtonDisabledBgColor = '#2b66b1',
+  uploadButtonBorderRadius = '9999px',
   guidelinesTextColor = '#2b66b1',
   guidelinesIconColor = '#2b66b1',
   previewCardBgColor = '#f8fafc',
   previewCardBorderColor = '#cbd5e1',
   previewCardUploadedBgColor = '#f1f5f9',
   previewCardTextColor = '#174b82',
+  previewCardBorderRadius = '8px',
 
   extraActionsSlot,
 
@@ -329,7 +337,7 @@ export function CardFileUploader({
       data-testid={id}
       className={`rounded-lg border p-5 shadow-sm ${className}`}
       style={{
-        borderRadius: '8px',
+        borderRadius: cardBorderRadius,
         border: `1px solid ${cardBorderColor}`,
         backgroundColor: cardBgColor,
         padding: '20px',
@@ -375,7 +383,7 @@ export function CardFileUploader({
             width: '160px',
             height: '140px',
             flexShrink: 0,
-            borderRadius: '8px',
+            borderRadius: previewCardBorderRadius,
             border: `1px solid ${previewCardBorderColor}`,
             display: 'flex',
             flexDirection: 'column',
@@ -416,7 +424,7 @@ export function CardFileUploader({
             style={{
               marginBottom: '12px',
               width: '100%',
-              borderRadius: '10px',
+              borderRadius: noteBorderRadius,
               border: `1px solid ${noteBorderColor}`,
               backgroundColor: noteBgColor,
               padding: '10px 14px',
@@ -550,7 +558,7 @@ export function CardFileUploader({
               </div>
             )}
 
-            {/* Custom Solid Primary Blue Upload Button (Guaranteed Primary Blue styling) */}
+            {/* Custom Solid Primary Blue Upload Button */}
             <div
               style={{
                 position: 'relative',
@@ -567,7 +575,7 @@ export function CardFileUploader({
                 onMouseEnter={() => setIsHoveredUpload(true)}
                 onMouseLeave={() => setIsHoveredUpload(false)}
                 style={{
-                  borderRadius: '9999px',
+                  borderRadius: uploadButtonBorderRadius,
                   border: 'none',
                   backgroundColor: uploadButtonBgColor,
                   color: uploadButtonTextColor,
