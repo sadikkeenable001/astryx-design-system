@@ -219,7 +219,7 @@ const styles = stylex.create({
     marginInlineStart: spacingVars['--spacing-1'],
     marginInlineEnd: spacingVars['--spacing-1'],
   },
-   
+
   popoverHeader: {
     paddingInline: spacingVars['--spacing-2'],
     paddingBlock: spacingVars['--spacing-1'],
@@ -228,7 +228,7 @@ const styles = stylex.create({
     color: colorVars['--color-text-secondary'],
     lineHeight: typeScaleVars['--text-supporting-leading'],
   },
-   
+
   stepCard: {
     borderRadius: '8px',
     paddingInline: spacingVars['--spacing-3'],
@@ -237,28 +237,33 @@ const styles = stylex.create({
     borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: 'transparent',
+    fontSize: '12px',
+    fontWeight: fontWeightVars['--font-weight-medium'],
     transitionProperty: 'background-color, border-color, color',
     transitionDuration: durationVars['--duration-fast'],
+    ':hover:where(:not(:disabled,[aria-disabled="true"]))': {
+      backgroundColor: '#fdebd2',
+    },
   },
-   
+
   stepCardActive: {
     backgroundColor: '#eaf2ff',
     borderColor: '#1453a3',
     color: '#0f172a',
   },
-   
+
   stepCardCompleted: {
     backgroundColor: '#d7f5dd',
     borderColor: 'transparent',
     color: '#0f172a',
   },
-   
+
   stepCardLocked: {
     backgroundColor: '#ffffff',
     borderColor: 'transparent',
     opacity: 0.6,
   },
-   
+
   iconBox: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -270,11 +275,11 @@ const styles = stylex.create({
     flexShrink: 0,
     marginInlineEnd: spacingVars['--spacing-2'],
   },
-   
+
   iconBoxActive: {
     backgroundColor: '#ffffff',
   },
-   
+
   iconBoxCompleted: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },

@@ -25,7 +25,8 @@ import {useCallback, useImperativeHandle, useRef, type ReactNode} from 'react';
 import type {BaseProps} from '../BaseProps';
 import * as stylex from '@stylexjs/stylex';
 import type {StyleXStyles} from '@stylexjs/stylex';
-import {spacingVars} from '../theme/tokens.stylex';
+import {spacingVars, durationVars} from '../theme/tokens.stylex';
+import {Icon} from '../Icon';
 import {mergeProps} from '../utils';
 import {
   SideNavCollapseContext,
@@ -145,7 +146,7 @@ const styles = stylex.create({
     boxSizing: 'border-box',
     overflow: 'hidden',
   },
-   
+
   card: {
     backgroundColor: '#ffffff',
     borderWidth: '1px',
@@ -154,6 +155,39 @@ const styles = stylex.create({
     borderRadius: '16px',
     padding: spacingVars['--spacing-3'],
     boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+  },
+
+  headerToggleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: spacingVars['--spacing-2'],
+  },
+  headerToggleContainerCollapsed: {
+    justifyContent: 'center',
+  },
+
+  headerToggleButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: '8px',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: '#e2e8f0',
+    backgroundColor: '#ffffff',
+    color: '#334155',
+    cursor: {
+      default: 'pointer',
+      ':is(:disabled,[aria-disabled="true"])': 'default',
+    },
+    transitionProperty: 'background-color, border-color',
+    transitionDuration: durationVars['--duration-fast'],
+    ':hover:where(:not(:disabled,[aria-disabled="true"]))': {
+      backgroundColor: '#f8fafc',
+    },
   },
   rootCollapsed: {
     width: spacingVars['--spacing-12'],
@@ -623,6 +657,21 @@ export function SideNav({
         resizableNavStyle,
       )}
       {...props}>
+      {showCollapseButton && variant === 'card' && (
+        <div
+          {...stylex.props(
+            styles.headerToggleContainer,
+            collapsed && styles.headerToggleContainerCollapsed,
+          )}>
+          <button
+            type="button"
+            aria-label="Toggle sidebar"
+            onClick={() => onCollapsedChange?.(!collapsed)}
+            {...stylex.props(styles.headerToggleButton)}>
+            <Icon icon="menu" size="sm" />
+          </button>
+        </div>
+      )}
       {hasStickyTop && (
         <div
           {...stylex.props(
