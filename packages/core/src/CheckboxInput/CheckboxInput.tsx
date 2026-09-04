@@ -60,9 +60,15 @@ const styles = stylex.create({
     alignItems: 'center',
     gap: spacingVars['--spacing-2'],
   },
+  containerBoxed: {
+    gap: spacingVars['--spacing-3'],
+    width: '100%',
+    alignItems: 'center',
+  },
   containerLabelHidden: {
     gap: 0,
   },
+  labelWrapperBoxed: {},
   checkboxWrapper: {
     position: 'relative',
     display: 'flex',
@@ -271,7 +277,7 @@ export interface CheckboxInputProps extends Omit<BaseProps, 'onChange'> {
   /** Custom padding for boxed/card variant */
   boxedPadding?: string;
   /** Custom border radius for boxed/card variant */
-  boxedRadius?: string;
+  boxedRadius?: string | number;
   /** Custom text color for label */
   labelColor?: string;
   /** Custom font weight for label */
@@ -422,6 +428,35 @@ export function CheckboxInput({
   const isBoxed = variant === 'boxed' || variant === 'card';
   const [isHovered, setIsHovered] = useState(false);
 
+  const parseRadius = (radius?: string | number): string | undefined => {
+    if (radius === undefined || radius === null || radius === '')
+      {return undefined;}
+    const r = String(radius).trim();
+    if (r === '0' || r === '0px' || r === 'none') {return '0px';}
+    if (r === 'pill' || r === 'full' || r === 'circle') {return '9999px';}
+    if (r === 'lg') {return '12px';}
+    if (r === 'md') {return '8px';}
+    if (r === 'sm') {return '4px';}
+    if (r === 'xl') {return '16px';}
+    if (r === '2xl') {return '24px';}
+    if (/^\d+(\.\d+)?$/.test(r)) {return `${r}px`;}
+    return r;
+  };
+
+  const parsedRadius = parseRadius(boxedRadius);
+
+  const computePadding = () => {
+    if (boxedPadding) {return boxedPadding;}
+    if (parsedRadius === '9999px') {return '16px 28px';}
+    if (parsedRadius) {
+      const numericVal = parseInt(parsedRadius, 10);
+      if (!isNaN(numericVal) && numericVal >= 20) {
+        return `14px ${Math.max(20, numericVal + 8)}px`;
+      }
+    }
+    return '12px 16px';
+  };
+
   const containerStyle: React.CSSProperties = {
     ...(isBoxed
       ? {
@@ -434,8 +469,8 @@ export function CheckboxInput({
               ? boxedHoverBorderColor
               : (boxedBorderColor ?? '#f0c36d')
           }`,
-          borderRadius: boxedRadius ?? '12px',
-          padding: boxedPadding ?? '12px 16px',
+          borderRadius: parsedRadius ?? '12px',
+          padding: computePadding(),
           transition: 'background-color 0.2s ease, border-color 0.2s ease',
           boxSizing: 'border-box',
           width: '100%',
@@ -450,11 +485,11 @@ export function CheckboxInput({
       onMouseEnter={isBoxed ? () => setIsHovered(true) : undefined}
       onMouseLeave={isBoxed ? () => setIsHovered(false) : undefined}
       className={className}
-      style={containerStyle}
       {...mergeProps(
         themeProps('checkbox-input', {size}),
         stylex.props(width != null && dynamicWidthStyles.width(width), xstyle),
-      )}>
+      )}
+      style={containerStyle}>
       <div
         ref={el => {
           // Interaction (hover/focus) listeners for the disabled-message
@@ -467,6 +502,7 @@ export function CheckboxInput({
         }}
         {...stylex.props(
           styles.container,
+          isBoxed && styles.containerBoxed,
           isLabelHidden && styles.containerLabelHidden,
           // Hover and focus reach the checkbox visual through this ancestor
           // marker rather than props, so the whole row drives it.
@@ -543,7 +579,11 @@ export function CheckboxInput({
             </CheckboxControl>
           </span>
         </div>
-        <div {...stylex.props(styles.labelWrapper)}>
+        <div
+          {...stylex.props(
+            styles.labelWrapper,
+            isBoxed && styles.labelWrapperBoxed,
+          )}>
           <FieldLabel
             // A checkbox's label shares a row with its control, unlike a form
             // field's label above its input. Naming the label rather than the
