@@ -183,6 +183,11 @@ const styles = stylex.create({
   },
   triggerPlaceholder: {
     color: colorVars['--color-text-secondary'],
+    fontWeight: fontWeightVars['--font-weight-normal'],
+  },
+  triggerSelected: {
+    color: colorVars['--color-text-primary'],
+    fontWeight: fontWeightVars['--font-weight-medium'],
   },
   triggerLabel: {
     flexGrow: 1,
@@ -1230,7 +1235,7 @@ export function Selector<T extends SelectorOptionType>(
   // Calculate offset to position selected item over trigger. Explicit
   // placement opts out of the selector-specific overlay behavior and uses the
   // standard layer positioning API instead.
-  const shouldOverlaySelectedItem = placement == null && !hasSearch;
+  const shouldOverlaySelectedItem = false;
   const {offset: rawOffset, isPositioned: rawIsPositioned} =
     useSelectedItemOffset({
       isOpen: popover.isOpen && shouldOverlaySelectedItem,
@@ -1657,7 +1662,12 @@ export function Selector<T extends SelectorOptionType>(
         {!startIcon &&
           selectedItem?.icon != null &&
           renderIconSlot(selectedItem.icon, {size: 'sm', color: 'secondary'})}
-        <span {...stylex.props(styles.triggerLabel)}>
+        <span
+          data-astryx-placeholder={!selectedItem ? 'true' : undefined}
+          {...stylex.props(
+            styles.triggerLabel,
+            !selectedItem ? styles.triggerPlaceholder : styles.triggerSelected,
+          )}>
           {selectedItem?.label ?? placeholder}
         </span>
         {isVerifiedBadge}
@@ -1865,10 +1875,13 @@ export function Selector<T extends SelectorOptionType>(
             aria-busy={isBusy || undefined}
             disabled={isDisabled && !showsDisabledMessage}
             aria-disabled={showsDisabledMessage ? 'true' : undefined}
+            data-astryx-has-selected={selectedItem ? 'true' : 'false'}
             placeholder={
-              placeholder ??
-              searchPlaceholder ??
-              t('@astryx.selector.searchPlaceholder')
+              surface.isOpen && searchQuery === '' && selectedItem
+                ? String(selectedItem.label)
+                : (placeholder ??
+                  searchPlaceholder ??
+                  t('@astryx.selector.searchPlaceholder'))
             }
             value={
               surface.isOpen
@@ -1884,7 +1897,8 @@ export function Selector<T extends SelectorOptionType>(
                 surface.show();
               }
             }}
-            onClick={() => {
+            onClick={e => {
+              e.stopPropagation();
               if (!surface.isOpen) {
                 surface.show();
               }
@@ -1892,9 +1906,6 @@ export function Selector<T extends SelectorOptionType>(
             onFocus={event => {
               onFocus?.(event);
               surface.onTriggerFocus(event);
-              if (!surface.isOpen) {
-                surface.show();
-              }
             }}
             onKeyDown={handleTriggerKeyDown}
             tabIndex={isDisabled && !showsDisabledMessage ? -1 : 0}
