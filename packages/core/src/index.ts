@@ -29,6 +29,8 @@ export * from './ButtonGroup';
 export * from './IconButton';
 export * from './Card';
 export * from './ClickableCard';
+export * from './StepCard';
+export * from './DashboardCards';
 export * from './Carousel';
 export * from './Calendar';
 export * from './Center';
@@ -93,7 +95,9 @@ export * from './TreeList';
 // Keyboard shortcut display
 export * from './Kbd';
 export * from './AlertDialog';
+export * from './ConfirmDialog';
 export * from './Dialog';
+export * from './InfoDialog';
 export * from './ContextMenu';
 export * from './DropdownMenu';
 export * from './MoreMenu';
@@ -104,6 +108,7 @@ export * from './TopNav';
 export * from './SideNav';
 export * from './MobileNav';
 export * from './Pagination';
+export * from './PageFooter';
 export * from './ProgressBar';
 
 // Layout utilities and components (includes HStack, VStack)

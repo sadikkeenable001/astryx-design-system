@@ -209,10 +209,20 @@
       "types": "./dist/ComplexSelector/index.d.ts",
       "default": "./dist/ComplexSelector/index.js"
     },
+    "./ConfirmDialog": {
+      "source": "./src/ConfirmDialog/index.ts",
+      "types": "./dist/ConfirmDialog/index.d.ts",
+      "default": "./dist/ConfirmDialog/index.js"
+    },
     "./ContextMenu": {
       "source": "./src/ContextMenu/index.ts",
       "types": "./dist/ContextMenu/index.d.ts",
       "default": "./dist/ContextMenu/index.js"
+    },
+    "./DashboardCards": {
+      "source": "./src/DashboardCards/index.ts",
+      "types": "./dist/DashboardCards/index.d.ts",
+      "default": "./dist/DashboardCards/index.js"
     },
     "./DateInput": {
       "source": "./src/DateInput/index.ts",
@@ -298,6 +308,11 @@
       "source": "./src/IconButton/index.ts",
       "types": "./dist/IconButton/index.d.ts",
       "default": "./dist/IconButton/index.js"
+    },
+    "./InfoDialog": {
+      "source": "./src/InfoDialog/index.ts",
+      "types": "./dist/InfoDialog/index.d.ts",
+      "default": "./dist/InfoDialog/index.js"
     },
     "./Indicator": {
       "source": "./src/Indicator/index.ts",
@@ -414,6 +429,11 @@
       "types": "./dist/Pagination/index.d.ts",
       "default": "./dist/Pagination/index.js"
     },
+    "./PageFooter": {
+      "source": "./src/PageFooter/index.ts",
+      "types": "./dist/PageFooter/index.d.ts",
+      "default": "./dist/PageFooter/index.js"
+    },
     "./Popover": {
       "source": "./src/Popover/index.ts",
       "types": "./dist/Popover/index.d.ts",
@@ -488,6 +508,11 @@
       "source": "./src/Stack/index.ts",
       "types": "./dist/Stack/index.d.ts",
       "default": "./dist/Stack/index.js"
+    },
+    "./StepCard": {
+      "source": "./src/StepCard/index.ts",
+      "types": "./dist/StepCard/index.d.ts",
+      "default": "./dist/StepCard/index.js"
     },
     "./StatusDot": {
       "source": "./src/StatusDot/index.ts",

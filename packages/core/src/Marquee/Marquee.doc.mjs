@@ -31,8 +31,8 @@ export const docs = {
   props: [
     {
       name: 'text',
-      type: 'string',
-      description: 'The announcement text. Rendered twice internally for the seamless loop.',
+      type: 'string | string[]',
+      description: 'The announcement text — a single string, or a list to scroll several messages through the same strip. The whole set is rendered twice internally for the seamless loop.',
       required: true,
     },
     {
@@ -40,6 +40,12 @@ export const docs = {
       type: 'number',
       description: 'Seconds for one full loop — lower is faster.',
       default: '25',
+    },
+    {
+      name: 'color',
+      type: 'string',
+      description: 'Text color — any CSS color value (hex, named color, a token via var(), ...).',
+      default: "colorVars['--color-error']",
     },
     {
       name: 'xstyle',

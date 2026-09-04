@@ -63,15 +63,17 @@ const styles = stylex.create({
       animationPlayState: 'paused',
     },
   }),
-  item: {
+  // A function style: `color` is a runtime prop (any CSS color a caller
+  // passes), not known at compile time.
+  item: (color: string) => ({
     display: 'inline-block',
     flexShrink: 0,
     paddingInlineEnd: spacingVars['--spacing-12'],
-    color: colorVars['--color-error'],
+    color,
     fontSize: typeScaleVars['--text-body-size'],
     lineHeight: typeScaleVars['--text-body-leading'],
     fontWeight: fontWeightVars['--font-weight-semibold'],
-  },
+  }),
 });
 
 // =============================================================================
@@ -81,13 +83,22 @@ const styles = stylex.create({
 export interface MarqueeProps extends BaseProps<HTMLDivElement> {
   /** Ref forwarded to the root element */
   ref?: React.Ref<HTMLDivElement>;
-  /** The announcement text. Rendered twice internally for the seamless loop. */
-  text: string;
+  /**
+   * The announcement text — a single string, or a list to scroll several
+   * messages through the same strip (each still gets its own trailing gap).
+   * The whole set is rendered twice internally for the seamless loop.
+   */
+  text: string | string[];
   /**
    * Seconds for one full loop — lower is faster.
    * @default 25
    */
   speed?: number;
+  /**
+   * Text color — any CSS color value (hex, named color, a token via `var()`, ...).
+   * @default colorVars['--color-error']
+   */
+  color?: string;
 }
 
 // =============================================================================
@@ -106,13 +117,16 @@ export interface MarqueeProps extends BaseProps<HTMLDivElement> {
  */
 export function Marquee({
   text,
-  speed = 25,
+  speed = 30,
+  color = colorVars['--color-error'],
   ref,
   xstyle,
   className,
   style,
   ...props
 }: MarqueeProps) {
+  const texts = Array.isArray(text) ? text : [text];
+
   return (
     <div
       ref={ref}
@@ -123,11 +137,22 @@ export function Marquee({
         className,
         style,
       )}>
-      <div aria-label={text} {...stylex.props(styles.track(`${speed}s`))}>
-        <span {...stylex.props(styles.item)}>{text}</span>
-        <span {...stylex.props(styles.item)} aria-hidden="true">
-          {text}
-        </span>
+      <div
+        aria-label={texts.join(' — ')}
+        {...stylex.props(styles.track(`${speed}s`))}>
+        {texts.map((t, i) => (
+          <span key={`a-${i}`} {...stylex.props(styles.item(color))}>
+            {t}
+          </span>
+        ))}
+        {texts.map((t, i) => (
+          <span
+            key={`b-${i}`}
+            {...stylex.props(styles.item(color))}
+            aria-hidden="true">
+            {t}
+          </span>
+        ))}
       </div>
     </div>
   );
