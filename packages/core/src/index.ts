@@ -51,6 +51,7 @@ export * from './EmptyState';
 export * from './Lightbox';
 export * from './Link';
 export * from './List';
+export * from './LiveClock';
 export * from './Marquee';
 export * from './MetadataList';
 export * from './NavIcon';

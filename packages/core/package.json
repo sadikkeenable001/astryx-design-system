@@ -389,6 +389,11 @@
       "types": "./dist/List/index.d.ts",
       "default": "./dist/List/index.js"
     },
+    "./LiveClock": {
+      "source": "./src/LiveClock/index.ts",
+      "types": "./dist/LiveClock/index.d.ts",
+      "default": "./dist/LiveClock/index.js"
+    },
     "./Markdown": {
       "source": "./src/Markdown/index.ts",
       "types": "./dist/Markdown/index.d.ts",
