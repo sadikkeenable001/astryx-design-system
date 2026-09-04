@@ -479,6 +479,11 @@
       "types": "./dist/RadioList/index.d.ts",
       "default": "./dist/RadioList/index.js"
     },
+    "./RegistrationStepper": {
+      "source": "./src/RegistrationStepper/index.ts",
+      "types": "./dist/RegistrationStepper/index.d.ts",
+      "default": "./dist/RegistrationStepper/index.js"
+    },
     "./Resizable": {
       "source": "./src/Resizable/index.ts",
       "types": "./dist/Resizable/index.d.ts",

@@ -108,15 +108,22 @@ const styles = stylex.create({
     fontSize: 15,
     fontWeight: 700,
     color: '#ffffff',
-    cursor: {default: 'pointer', ':is(:disabled,[aria-disabled="true"])': 'default'},
+    cursor: {
+      default: 'pointer',
+      ':is(:disabled,[aria-disabled="true"])': 'default',
+    },
   },
   primaryButton: {
     backgroundColor: '#2263ae',
-    ':hover:where(:not(:disabled,[aria-disabled="true"]))': {backgroundColor: '#1a5494'},
+    ':hover:where(:not(:disabled,[aria-disabled="true"]))': {
+      backgroundColor: '#1a5494',
+    },
   },
   secondaryButton: {
     backgroundColor: '#e53935',
-    ':hover:where(:not(:disabled,[aria-disabled="true"]))': {backgroundColor: '#c92d29'},
+    ':hover:where(:not(:disabled,[aria-disabled="true"]))': {
+      backgroundColor: '#c92d29',
+    },
   },
 });
 
@@ -167,12 +174,21 @@ export interface ConfirmDialogProps extends BaseProps<HTMLDialogElement> {
   icon?: ConfirmDialogIcon;
   /** Confirm button label. */
   confirmLabel: string;
-  /** Cancel button label. */
-  cancelLabel: string;
+  /** Cancel button label. Omit (with `onCancel`) for a single-button popup — e.g. a plain success/warning/error acknowledgement. */
+  cancelLabel?: string;
   /** Called when the confirm button is clicked. Does NOT auto-close. */
   onConfirm: () => unknown;
-  /** Called when the cancel button is clicked. Does NOT auto-close. */
-  onCancel: () => unknown;
+  /** Called when the cancel button is clicked. Omit (with `cancelLabel`) for a single-button popup. Does NOT auto-close. */
+  onCancel?: () => unknown;
+  /**
+   * Whether Escape or a backdrop click closes the dialog (calling `onCancel`,
+   * falling back to `onConfirm` for a single-button popup). Matches the
+   * reference's distinction between a blocking two-button confirm
+   * (`allowOutsideClick: false`) and a dismissible single-button
+   * acknowledgement (`allowOutsideClick: true`).
+   * @default false
+   */
+  isDismissible?: boolean;
   /** Dialog width. */
   width?: number | string;
 }
@@ -212,6 +228,7 @@ export function ConfirmDialog({
   cancelLabel,
   onConfirm,
   onCancel,
+  isDismissible = false,
   width = 560,
   ref,
   xstyle,
@@ -219,12 +236,15 @@ export function ConfirmDialog({
   style,
   ...props
 }: ConfirmDialogProps) {
+  const hasCancel = cancelLabel != null && onCancel != null;
   return (
     <Dialog
       ref={ref}
       isOpen={isOpen}
-      onOpenChange={() => {}}
-      purpose="required"
+      onOpenChange={dialogIsOpen => {
+        if (!dialogIsOpen) {(onCancel ?? onConfirm)();}
+      }}
+      purpose={isDismissible ? 'info' : 'required'}
       width={width}
       padding={0}
       aria-label={title}
@@ -256,16 +276,19 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
+            data-autofocus={!hasCancel ? true : undefined}
             {...stylex.props(styles.button, styles.primaryButton)}>
             {confirmLabel}
           </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            data-autofocus
-            {...stylex.props(styles.button, styles.secondaryButton)}>
-            {cancelLabel}
-          </button>
+          {hasCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              data-autofocus
+              {...stylex.props(styles.button, styles.secondaryButton)}>
+              {cancelLabel}
+            </button>
+          )}
         </div>
       </div>
     </Dialog>

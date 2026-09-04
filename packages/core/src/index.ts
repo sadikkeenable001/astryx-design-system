@@ -80,6 +80,7 @@ export * from './InputGroup';
 export * from './Item';
 export * from './Text';
 export * from './TextInput';
+export * from './RegistrationStepper';
 export * from './TabList';
 export * from './TextArea';
 export * from './TimeInput';

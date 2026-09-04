@@ -150,6 +150,9 @@ const styles = stylex.create({
   link: {
     textDecoration: 'none',
   },
+  pillShape: {
+    borderRadius: 9999,
+  },
 });
 
 // Dynamic style for the consumer-controlled button width. Numbers are treated
@@ -564,6 +567,7 @@ export function Button({
   variant = 'secondary',
   size: sizeProp,
   type = 'button',
+  isPill = false,
   isDisabled = false,
   isLoading = false,
   isInterruptible = false,
@@ -698,6 +702,7 @@ export function Button({
     // for every variant, and `destructive` re-colors just the ring to match
     // its own surface. Ordering is the mechanism — StyleX is last-wins.
     variants[variant],
+    isPill && styles.pillShape,
     xstyle,
   );
 

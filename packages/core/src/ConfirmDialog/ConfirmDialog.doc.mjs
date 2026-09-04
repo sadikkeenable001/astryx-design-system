@@ -24,8 +24,8 @@ const anatomy = [
   },
   {
     name: 'Cancel button',
-    required: true,
-    description: 'Solid red button. Renders second (right). Takes initial focus.',
+    required: false,
+    description: 'Solid red button. Renders second (right). Takes initial focus. Omitted for a single-button popup.',
   },
 ];
 
@@ -69,8 +69,7 @@ export const docs = {
     {
       name: 'cancelLabel',
       type: 'string',
-      description: 'Cancel button label.',
-      required: true,
+      description: 'Cancel button label. Omit (with onCancel) for a single-button popup — e.g. a plain success/warning/error acknowledgement.',
     },
     {
       name: 'onConfirm',
@@ -81,8 +80,13 @@ export const docs = {
     {
       name: 'onCancel',
       type: '() => unknown',
-      description: 'Called when the cancel button is clicked. Does NOT auto-close.',
-      required: true,
+      description: 'Called when the cancel button is clicked. Omit (with cancelLabel) for a single-button popup. Does NOT auto-close.',
+    },
+    {
+      name: 'isDismissible',
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether Escape or a backdrop click closes the dialog (calling onCancel, falling back to onConfirm for a single-button popup).',
     },
     {
       name: 'width',
@@ -133,6 +137,7 @@ export const docsDense = {
     cancelLabel: 'cancel button label',
     onConfirm: 'called on confirm click',
     onCancel: 'called on cancel click',
+    isDismissible: 'whether Escape/backdrop click closes it',
     width: 'dialog width',
     xstyle: 'StyleX styles for layout; must be stylex.create() value',
   },
