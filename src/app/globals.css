@@ -288,7 +288,7 @@ button.astryx-button,
 a.astryx-button,
 button[data-variant],
 [data-astryx-button],
-button {
+button:not([role="combobox"]):not([data-astryx-selector="true"] button):not([data-astryx-selector-input]) {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -461,3 +461,38 @@ div[class*="description"],
   font-size: 13px !important;
   color: #475569 !important; /* text-slate-600 */
 }
+
+/* 9. Selector Component Custom Overrides */
+[data-astryx-selector="true"] button,
+button[role="combobox"] {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+}
+
+/* Placeholder styling when no item is selected */
+[data-astryx-selector="true"] [data-astryx-placeholder="true"],
+[data-astryx-selector="true"] span[data-astryx-placeholder="true"],
+[data-astryx-selector-input="true"][data-astryx-has-selected="false"]::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
+
+/* Styling when an item is selected */
+[data-astryx-selector-input="true"][data-astryx-has-selected="true"]::placeholder {
+  color: #0f172a !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+
