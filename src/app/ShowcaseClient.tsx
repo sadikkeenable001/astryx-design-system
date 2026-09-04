@@ -138,6 +138,7 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
   // Email states
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
+  const [emailCaptcha, setEmailCaptcha] = useState('');
   const [emailOwnershipAccepted, setEmailOwnershipAccepted] = useState(false);
   const [isEmailOtpSent, setIsEmailOtpSent] = useState(false);
   const [emailOtp, setEmailOtp] = useState('');
@@ -146,6 +147,7 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
   // Mobile states
   const [mobile, setMobile] = useState('');
   const [confirmMobile, setConfirmMobile] = useState('');
+  const [mobileCaptcha, setMobileCaptcha] = useState('');
   const [mobileOwnershipAccepted, setMobileOwnershipAccepted] = useState(false);
   const [isMobileOtpSent, setIsMobileOtpSent] = useState(false);
   const [mobileOtp, setMobileOtp] = useState('');
@@ -241,12 +243,13 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
               boxedHoverBgColor="#fff3cc"
               boxedHoverBorderColor="#f0a500"
               boxedRadius="12px"
-              boxedPadding="12px 16px"
+              boxedPadding="16px 28px"
               label="I hereby declare that I have read and understood the above Instructions carefully and I accept all the terms and conditions mentioned hereinabove."
               value={step1Accepted}
               onChange={(checked) => setStep1Accepted(checked)}
               isRequired
             />
+            
           </div>
 
           {/* Centered Astryx Button */}
@@ -319,6 +322,8 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                   <CanvasCaptcha
                     label="CAPTCHA (as shown below) *"
                     codeLength={5}
+                    value={emailCaptcha}
+                    onChange={(val) => setEmailCaptcha(val)}
                     onVerify={(isValid) => {}}
                   />
                 </div>
@@ -349,16 +354,21 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                 </div>
               )}
 
-              {/* Yellow Declaration Box using Astryx CheckboxInput */}
+              {/* Yellow Declaration Box using Astryx CheckboxInput with variant="card" */}
               {!isEmailOtpSent && (
-                <div className="p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
-                  <CheckboxInput
-                    label="I declare that the above e-Mail is owned by me and I have not created any account using this e-Mail ID on this portal. *"
-                    value={emailOwnershipAccepted}
-                    onChange={(checked) => setEmailOwnershipAccepted(checked)}
-                    isRequired
-                  />
-                </div>
+                <CheckboxInput
+                  variant="card"
+                  boxedBgColor="#fff8e5"
+                  boxedBorderColor="#f0c36d"
+                  boxedHoverBgColor="#fff3cc"
+                  boxedHoverBorderColor="#f0a500"
+                  boxedRadius="12px"
+                  boxedPadding="12px 16px"
+                  label="I declare that the above e-Mail is owned by me and I have not created any account using this e-Mail ID on this portal."
+                  value={emailOwnershipAccepted}
+                  onChange={(checked) => setEmailOwnershipAccepted(checked)}
+                  isRequired
+                />
               )}
 
               {/* Centered Astryx Button */}
@@ -438,6 +448,8 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                   <CanvasCaptcha
                     label="CAPTCHA (as shown below) *"
                     codeLength={5}
+                    value={mobileCaptcha}
+                    onChange={(val) => setMobileCaptcha(val)}
                     onVerify={(isValid) => {}}
                   />
                 </div>
@@ -468,16 +480,21 @@ function OtrAccountCreationView({ onProceedToRegistration }: { onProceedToRegist
                 </div>
               )}
 
-              {/* Yellow Declaration Box using Astryx CheckboxInput */}
+              {/* Yellow Declaration Box using Astryx CheckboxInput with variant="card" */}
               {!isMobileOtpSent && (
-                <div className="p-3 rounded-xl border border-[#f0c36d] bg-[#fff8e5] hover:border-[#f0a500] hover:bg-[#fff3cc] transition-colors">
-                  <CheckboxInput
-                    label="I declare that the above Mobile Number is owned by me and I have not created any account using this Mobile Number on this portal. *"
-                    value={mobileOwnershipAccepted}
-                    onChange={(checked) => setMobileOwnershipAccepted(checked)}
-                    isRequired
-                  />
-                </div>
+                <CheckboxInput
+                  variant="card"
+                  boxedBgColor="#fff8e5"
+                  boxedBorderColor="#f0c36d"
+                  boxedHoverBgColor="#fff3cc"
+                  boxedHoverBorderColor="#f0a500"
+                  boxedRadius="12px"
+                  boxedPadding="12px 16px"
+                  label="I declare that the above Mobile Number is owned by me and I have not created any account using this Mobile Number on this portal."
+                  value={mobileOwnershipAccepted}
+                  onChange={(checked) => setMobileOwnershipAccepted(checked)}
+                  isRequired
+                />
               )}
 
               {/* Centered Astryx Button */}

@@ -1,2 +1,3 @@
 allowBuilds:
+  '@astryxdesign/core@file:../astryx-design-system/astryxdesign-core-0.5.2.tgz': set this to true or false
   '@astryxdesign/core@file:astryxdesign-core-0.5.2.tgz': true

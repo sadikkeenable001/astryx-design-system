@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@astryxdesign/core':
-        specifier: file:astryxdesign-core-0.5.2.tgz
-        version: file:astryxdesign-core-0.5.2.tgz(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: file:../astryx-design-system/astryxdesign-core-0.5.2.tgz
+        version: file:../astryx-design-system/astryxdesign-core-0.5.2.tgz(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stylexjs/stylex':
         specifier: ^0.19.0
         version: 0.19.0
@@ -52,8 +52,8 @@ packages:
     resolution: {integrity: sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA==}
     engines: {node: '>=10'}
 
-  '@astryxdesign/core@file:astryxdesign-core-0.5.2.tgz':
-    resolution: {integrity: sha512-v/AaKeDFY8dGwLdMkvTv0wgVaC5QcUvCL0KqUV6MWu3NT3kl7t5bKGS1OO39+MR2bGsLhXeftBMFGtjXuL8KHw==, tarball: file:astryxdesign-core-0.5.2.tgz}
+  '@astryxdesign/core@file:../astryx-design-system/astryxdesign-core-0.5.2.tgz':
+    resolution: {integrity: sha512-FrsrTTu/I6mazxXnRO88bitkkv/N1RiVSYk8Oa7n/X+JPaUQOMIl4BY2Mb50ZBU7qV82o7uMOALuNOVJXllKFA==, tarball: file:../astryx-design-system/astryxdesign-core-0.5.2.tgz}
     version: 0.5.2
     peerDependencies:
       '@stylexjs/stylex': ^0.19.0
@@ -656,7 +656,7 @@ snapshots:
 
   '@alloc/quick-lru@5.3.0': {}
 
-  '@astryxdesign/core@file:astryxdesign-core-0.5.2.tgz(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/core@file:../astryx-design-system/astryxdesign-core-0.5.2.tgz(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@stylexjs/stylex': 0.19.0
       intl-messageformat: 11.2.14

@@ -33,22 +33,22 @@ body {
    SHARP URN / KEYCLOAK EXACT UI MATCH OVERRIDES FOR ASTRYX DESIGN SYSTEM
    ============================================================================= */
 
-/* 1. Form Inputs & Selects - Sharp Dark Slate Border + Subtle Inset Shadow */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="tel"],
+/* Standalone Inputs (not inside Astryx TextInput wrapper) */
+input[type="text"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
+input[type="email"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
+input[type="password"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
+input[type="number"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
+input[type="tel"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
 select,
 .xds-input,
 [data-slot="input"] {
-  border: 1px solid #64748b !important; /* border-slate-500 */
+  border: 1px solid #64748b !important;
   background-color: #ffffff !important;
-  border-radius: 6px !important; /* rounded-md */
+  border-radius: 6px !important;
   padding: 8px 12px !important;
   font-size: 14px !important;
   font-weight: 500 !important;
-  color: #0f172a !important; /* text-slate-900 */
+  color: #0f172a !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15) !important;
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
   outline: none !important;
@@ -56,29 +56,75 @@ select,
   width: 100% !important;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-input[type="tel"]:focus,
+input[type="text"]:not(div[class*="text-input"] input):focus,
+input[type="email"]:not(div[class*="text-input"] input):focus,
+input[type="password"]:not(div[class*="text-input"] input):focus,
+input[type="number"]:not(div[class*="text-input"] input):focus,
+input[type="tel"]:not(div[class*="text-input"] input):focus,
 select:focus {
-  border-color: #0f172a !important; /* focus-visible:border-slate-900 */
+  border-color: #0f172a !important;
   box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.2) !important;
+}
+
+/* 2. Astryx TextInput Wrapper & Inner Input Styling (icon inside box) */
+div[class*="text-input"],
+div[data-astryx-text-input="true"],
+.astryx-text-input {
+  border: 1px solid #64748b !important;
+  background-color: #ffffff !important;
+  border-radius: 8px !important;
+  padding: 0 14px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+div[class*="text-input"]:focus-within,
+div[data-astryx-text-input="true"]:focus-within,
+.astryx-text-input:focus-within {
+  border-color: #195992 !important;
+  box-shadow: 0 0 0 2px rgba(25, 89, 146, 0.2) !important;
+}
+
+div[class*="text-input"] input,
+div[data-astryx-text-input="true"] input,
+.astryx-text-input input {
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  height: 100% !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+}
+
+div[class*="text-input"] input:focus,
+div[data-astryx-text-input="true"] input:focus,
+.astryx-text-input input:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* 2. Astryx Input Wrappers, Selectors & Field Containers */
 [data-astryx-field],
 [data-astryx-selector="true"],
-[data-astryx-theme="selector"],
-div[class*="field"],
-div[class*="inputWrapper"] {
+[data-astryx-theme="selector"] {
   border-radius: 6px !important;
 }
 
 /* Ensure Field wrapper & Selector trigger apply clear sharp slate border */
 [data-astryx-selector="true"],
-div[data-astryx-theme="selector"],
-div[class*="inputWrapper"] {
+div[data-astryx-theme="selector"] {
   border: 1px solid #64748b !important;
   background-color: #ffffff !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15) !important;
@@ -90,8 +136,7 @@ div[class*="inputWrapper"] {
 }
 
 [data-astryx-selector="true"]:focus-within,
-div[data-astryx-theme="selector"]:focus-within,
-div[class*="inputWrapper"]:focus-within {
+div[data-astryx-theme="selector"]:focus-within {
   border-color: #0f172a !important;
   box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.2) !important;
 }
@@ -168,9 +213,7 @@ div[data-astryx-theme="selector"] input:focus {
 
 
 /* 3. Field Labels */
-label,
-[data-astryx-label],
-div[class*="label"] {
+[data-astryx-label] {
   font-size: 14px !important;
   font-weight: 600 !important;
   color: #1e293b !important; /* text-slate-800 */
@@ -179,7 +222,6 @@ div[class*="label"] {
 }
 
 /* 4. Cards / Section Containers */
-div[class*="card"],
 [data-astryx-card],
 .astryx-card {
   background-color: #ffffff !important;
@@ -207,12 +249,27 @@ div[class*="image-uploader"]:hover {
   border-color: #2563eb !important;
 }
 
-/* 6. Buttons - UPSC / Keycloak Sharp Style & Astryx Component Variants */
+/* Checkbox Card Container Alignment & Spacing */
+div[data-astryx-checkbox] {
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+/* Ensure checkbox indicator does not draw a solid white block behind the checkbox in cards */
+.astryx-checkbox-indicator,
+span.astryx-checkbox-indicator,
+span.astryx-checkbox {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 6. Buttons - UPSC / Keycloak Pill Variant Style */
 .astryx-button,
 button.astryx-button,
 a.astryx-button,
 button[data-variant],
-[data-astryx-button] {
+[data-astryx-button],
+button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -220,8 +277,8 @@ button[data-variant],
   font-weight: 600 !important;
   font-size: 14px !important;
   line-height: 1.4 !important;
-  border-radius: 6px !important;
-  padding: 8px 18px !important;
+  border-radius: 9999px !important; /* FULL PILL SHAPE */
+  padding: 10px 24px !important;
   cursor: pointer !important;
   transition: all 0.15s ease-in-out !important;
   text-decoration: none !important;
@@ -231,25 +288,28 @@ button[data-variant],
 }
 
 /* Button Size Variants */
-.astryx-button.sm, [data-size="sm"] {
-  padding: 5px 12px !important;
+.astryx-button.sm, button[data-size="sm"], .astryx-button[data-size="sm"] {
+  padding: 6px 16px !important;
   font-size: 12px !important;
   height: 32px !important;
+  border-radius: 9999px !important;
 }
 
-.astryx-button.md, [data-size="md"] {
-  padding: 8px 18px !important;
+.astryx-button.md, button[data-size="md"], .astryx-button[data-size="md"] {
+  padding: 10px 22px !important;
   font-size: 14px !important;
-  height: 38px !important;
+  height: 40px !important;
+  border-radius: 9999px !important;
 }
 
-.astryx-button.lg, [data-size="lg"] {
-  padding: 10px 24px !important;
+.astryx-button.lg, button[data-size="lg"], .astryx-button[data-size="lg"] {
+  padding: 12px 28px !important;
   font-size: 16px !important;
-  height: 44px !important;
+  height: 46px !important;
+  border-radius: 9999px !important;
 }
 
-/* Primary Variant - Rich Navy Blue */
+/* Primary Variant - Rich Navy Blue Pill */
 .astryx-button.primary,
 [data-variant="primary"],
 button[data-variant="primary"] {
@@ -265,7 +325,7 @@ button[data-variant="primary"] {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Secondary Variant - Crisp Slate Surface */
+/* Secondary Variant - Crisp Slate Surface Pill */
 .astryx-button.secondary,
 [data-variant="secondary"],
 button[data-variant="secondary"] {
@@ -333,10 +393,10 @@ button[data-variant="table"] {
   background-color: #195992 !important;
   color: #ffffff !important;
   border: 1px solid #195992 !important;
-  padding: 4px 10px !important;
+  padding: 4px 12px !important;
   font-size: 12px !important;
   height: 28px !important;
-  border-radius: 4px !important;
+  border-radius: 9999px !important;
 }
 
 /* Disabled State for ALL Astryx Buttons */
