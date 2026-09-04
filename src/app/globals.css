@@ -34,12 +34,12 @@ body {
    ============================================================================= */
 
 /* Standalone Inputs (not inside Astryx TextInput wrapper) */
-input[type="text"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
-input[type="email"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
-input[type="password"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
-input[type="number"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
-input[type="tel"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input),
-select,
+input[type="text"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input):not([data-astryx-selector="true"] input):not([data-astryx-selector-input] input),
+input[type="email"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input):not([data-astryx-selector="true"] input):not([data-astryx-selector-input] input),
+input[type="password"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input):not([data-astryx-selector="true"] input):not([data-astryx-selector-input] input),
+input[type="number"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input):not([data-astryx-selector="true"] input):not([data-astryx-selector-input] input),
+input[type="tel"]:not(div[class*="text-input"] input):not([data-astryx-text-input] input):not([data-astryx-selector="true"] input):not([data-astryx-selector-input] input),
+select:not([data-astryx-selector="true"] select),
 .xds-input,
 [data-slot="input"] {
   border: 1px solid #64748b !important;
