@@ -241,6 +241,11 @@ const variants = stylex.create({
     borderStyle: 'solid',
     borderColor: colorVars['--color-border'],
   },
+  pill: {
+    backgroundColor: colorVars['--color-accent'],
+    color: colorVars['--color-on-accent'],
+    borderRadius: 9999,
+  },
 });
 
 /**
@@ -287,6 +292,11 @@ export interface ButtonProps extends BaseProps<HTMLButtonElement> {
    * @default 'none'
    */
   elevation?: Elevation;
+  /**
+   * Whether the button renders as a pill with fully rounded corners (border-radius: 9999px).
+   * @default false
+   */
+  isPill?: boolean;
   /**
    * Whether the button is disabled.
    * @default false

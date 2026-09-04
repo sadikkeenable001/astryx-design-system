@@ -32,6 +32,7 @@ export interface ButtonVariantMap {
   outline: true;
   table: true;
   stepCard: true;
+  pill: true;
 }
 
 export {Button} from './Button';
